@@ -1,0 +1,208 @@
+/* ---------------------------------------------------------------
+   Toàn bộ giao diện của site nằm trong file này.
+   Sửa mấy biến màu ở dưới là đổi được cả trang.
+   --------------------------------------------------------------- */
+
+:root {
+  --bg:     #fbfaf7;
+  --fg:     #1f1e1c;
+  --muted:  #6f6a63;
+  --rule:   #e5e1d8;
+  --link:   #8a3d2c;
+  --accent: #f3ede2;
+
+  /* Bề rộng cột chữ. Đừng nới rộng quá — mắt đọc dòng dài sẽ mỏi. */
+  --measure: 38rem;
+
+  /* Font có chân, ưu tiên các font phủ đủ dấu tiếng Việt.
+     Muốn đổi sang font Google (Lora, Source Serif 4...) thì thêm
+     một thẻ <link> vào các file HTML rồi sửa dòng này. */
+  --serif: Cambria, Constantia, "Palatino Linotype", "Times New Roman", "Noto Serif", Georgia, serif;
+  --sans:  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:     #141312;
+    --fg:     #e6e2da;
+    --muted:  #948e84;
+    --rule:   #2e2c28;
+    --link:   #d99b7f;
+    --accent: #201e1b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 100%; }
+
+body {
+  margin: 0;
+  padding: 0 1.4rem;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: 1.18rem;
+  line-height: 1.75;          /* rộng hơn chuẩn tiếng Anh, vì dấu tiếng Việt có nhiều tầng */
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+main, .site-header, .site-footer {
+  max-width: var(--measure);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-style: dotted; }
+
+/* --- Đầu trang --------------------------------------------------- */
+
+.site-header {
+  padding: 3rem 0 2rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2.5rem;
+}
+
+.site-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: var(--fg);
+  text-decoration: none;
+}
+.site-title:hover { color: var(--link); }
+
+.site-tagline {
+  margin: .4rem 0 0;
+  color: var(--muted);
+  font-size: .95rem;
+  font-style: italic;
+}
+
+.site-nav { margin-top: 1rem; font-family: var(--sans); font-size: .88rem; }
+.site-nav a { margin-right: 1.1rem; color: var(--muted); }
+.site-nav a:hover { color: var(--link); }
+
+/* --- Danh sách bài ----------------------------------------------- */
+
+.post-list { list-style: none; padding: 0; margin: 0; }
+
+.post-list li {
+  padding: .55rem 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.post-list time {
+  flex: 0 0 8.5rem;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: .82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-list a { color: var(--fg); text-decoration: none; }
+.post-list a:hover { color: var(--link); text-decoration: underline; }
+
+.post-list-empty { color: var(--muted); font-style: italic; }
+
+@media (max-width: 34rem) {
+  .post-list li { display: block; }
+  .post-list time { display: block; margin-bottom: .1rem; }
+}
+
+/* --- Bài viết ----------------------------------------------------- */
+
+.post h1 {
+  font-size: 1.9rem;
+  line-height: 1.25;
+  font-weight: 600;
+  margin: 0 0 .5rem;
+  letter-spacing: -.01em;
+}
+
+.post-meta {
+  margin: 0 0 2.5rem;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: .82rem;
+}
+.post-meta .updated::before { content: " · "; }
+
+.post h2 { font-size: 1.32rem; font-weight: 600; margin: 2.6rem 0 .7rem; line-height: 1.35; }
+.post h3 { font-size: 1.12rem; font-weight: 600; margin: 2rem 0 .5rem; line-height: 1.4; }
+
+.post p { margin: 0 0 1.35rem; }
+
+.post blockquote {
+  margin: 1.8rem 0;
+  padding: .1rem 0 .1rem 1.3rem;
+  border-left: 2px solid var(--rule);
+  color: var(--muted);
+  font-style: italic;
+}
+.post blockquote p:last-child { margin-bottom: 0; }
+
+.post ul, .post ol { margin: 0 0 1.35rem; padding-left: 1.4rem; }
+.post li { margin-bottom: .4rem; }
+
+.post hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 3rem auto;
+  width: 40%;
+}
+
+.post img { max-width: 100%; height: auto; display: block; margin: 2rem auto; }
+
+.post code {
+  background: var(--accent);
+  padding: .1em .35em;
+  border-radius: 3px;
+  font-size: .88em;
+}
+.post pre {
+  background: var(--accent);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: .85rem;
+  line-height: 1.6;
+}
+.post pre code { background: none; padding: 0; }
+
+.post strong { font-weight: 600; }
+
+/* --- Chú thích cuối trang ----------------------------------------- */
+
+.fnref { font-size: .7em; vertical-align: super; line-height: 0; }
+.fnref a { text-decoration: none; padding: 0 .1em; }
+
+.footnotes {
+  margin-top: 3.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+  font-size: .93rem;
+  color: var(--muted);
+}
+.footnotes ol { padding-left: 1.3rem; margin: 0; }
+.footnotes li { margin-bottom: .5rem; line-height: 1.65; }
+.footnotes .fn-back { text-decoration: none; margin-left: .3rem; }
+
+/* --- Cuối trang --------------------------------------------------- */
+
+.back { margin: 3.5rem 0 0; font-family: var(--sans); font-size: .88rem; }
+
+.site-footer {
+  margin-top: 4rem;
+  padding: 1.5rem 0 3rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: .82rem;
+}
+.site-footer p { margin: 0; }

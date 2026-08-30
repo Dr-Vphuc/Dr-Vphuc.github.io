@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soạn bài</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root {
+    --ui-bg:#f6f5f2; --ui-panel:#fff; --ui-fg:#22201d; --ui-muted:#78736c;
+    --ui-rule:#dedad2; --ui-accent:#8a3d2c; --ui-ok:#2f6b46; --ui-err:#a33224;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ui-bg:#111010; --ui-panel:#1a1918; --ui-fg:#e6e2da; --ui-muted:#928c83;
+      --ui-rule:#302e2a; --ui-accent:#d99b7f; --ui-ok:#6fbf90; --ui-err:#e0806f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--ui-bg); color: var(--ui-fg);
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+
+  /* --- màn hình đăng nhập --- */
+  #gate { max-width: 30rem; margin: 4rem auto; padding: 0 1.5rem; }
+  #gate h1 { font-size: 1.3rem; margin: 0 0 .3rem; }
+  #gate p { color: var(--ui-muted); margin: 0 0 1.2rem; }
+  #gate ol { color: var(--ui-muted); padding-left: 1.2rem; margin: 0 0 1.2rem; }
+  #gate li { margin-bottom: .45rem; }
+  #gate a { color: var(--ui-accent); }
+  #gate input {
+    width: 100%; padding: .6rem .7rem; border: 1px solid var(--ui-rule);
+    border-radius: 5px; background: var(--ui-panel); margin-bottom: .7rem;
+  }
+  code { background: var(--ui-bg); border: 1px solid var(--ui-rule);
+         padding: .05em .35em; border-radius: 3px; font-size: .88em; }
+
+  /* --- thanh trên cùng --- */
+  header.bar {
+    display: flex; gap: .6rem; align-items: center; flex-wrap: wrap;
+    padding: .6rem .9rem; background: var(--ui-panel);
+    border-bottom: 1px solid var(--ui-rule);
+  }
+  #title {
+    flex: 1 1 18rem; min-width: 12rem; padding: .45rem .6rem;
+    border: 1px solid var(--ui-rule); border-radius: 5px; background: var(--ui-bg);
+    font-size: 1rem; font-weight: 600;
+  }
+  #picker { padding: .45rem .5rem; border: 1px solid var(--ui-rule);
+            border-radius: 5px; background: var(--ui-bg); max-width: 15rem; }
+  .btn {
+    padding: .45rem .85rem; border: 1px solid var(--ui-rule); border-radius: 5px;
+    background: var(--ui-bg); cursor: pointer;
+  }
+  .btn:hover:not(:disabled) { border-color: var(--ui-accent); color: var(--ui-accent); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.primary { background: var(--ui-accent); border-color: var(--ui-accent); color: #fff; font-weight: 600; }
+  @media (prefers-color-scheme: dark) { .btn.primary { color: #17150f; } }
+
+  /* --- thanh công cụ --- */
+  .toolbar {
+    display: flex; gap: .2rem; flex-wrap: wrap; align-items: center;
+    padding: .35rem .9rem; background: var(--ui-panel);
+    border-bottom: 1px solid var(--ui-rule);
+  }
+  .toolbar button {
+    min-width: 2rem; padding: .3rem .55rem; border: 1px solid transparent;
+    border-radius: 4px; background: none; cursor: pointer; color: var(--ui-muted);
+  }
+  .toolbar button:hover { background: var(--ui-bg); border-color: var(--ui-rule); color: var(--ui-fg); }
+  .toolbar .sep { width: 1px; height: 1.3rem; background: var(--ui-rule); margin: 0 .35rem; }
+
+  /* --- vùng soạn thảo --- */
+  main.split { flex: 1; display: flex; min-height: 0; }
+  #editor {
+    flex: 1 1 50%; min-width: 0; padding: 1.6rem 1.4rem; border: 0;
+    background: var(--ui-panel); resize: none; outline: none;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 14.5px; line-height: 1.75; color: var(--ui-fg);
+  }
+  #preview { flex: 1 1 50%; min-width: 0; border: 0; border-left: 1px solid var(--ui-rule); background: #fff; }
+  @media (prefers-color-scheme: dark) { #preview { background: #141312; } }
+  @media (max-width: 52rem) {
+    main.split { flex-direction: column; }
+    #preview { border-left: 0; border-top: 1px solid var(--ui-rule); min-height: 40vh; }
+  }
+
+  /* --- thanh trạng thái --- */
+  footer.status {
+    display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+    padding: .45rem .9rem; background: var(--ui-panel);
+    border-top: 1px solid var(--ui-rule); color: var(--ui-muted); font-size: .82rem;
+  }
+  #msg.ok  { color: var(--ui-ok); }
+  #msg.err { color: var(--ui-err); }
+  #msg a { color: inherit; }
+  .grow { flex: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===== Màn hình nhập token ===== -->
+<section id="gate">
+  <h1>Soạn bài</h1>
+  <p>Trang này cần một GitHub token để đăng bài lên repo.</p>
+  <ol>
+    <li>Vào <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Developer settings → Fine-grained tokens</a>.</li>
+    <li><em>Repository access</em>: chọn <strong>Only select repositories</strong> → đúng repo blog này.</li>
+    <li><em>Permissions</em>: mục <strong>Contents</strong> đặt thành <strong>Read and write</strong>. Không cần quyền nào khác.</li>
+    <li>Tạo xong, sao chép token rồi dán vào ô dưới.</li>
+  </ol>
+  <input id="token-input" type="password" placeholder="github_pat_..." autocomplete="off" spellcheck="false">
+  <button class="btn primary" id="token-save">Lưu và bắt đầu viết</button>
+  <p id="gate-msg" style="margin-top:.9rem"></p>
+</section>
+
+<!-- ===== Trình soạn thảo ===== -->
+<div id="app" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+  <header class="bar">
+    <input id="title" type="text" placeholder="Tiêu đề bài viết" spellcheck="false">
+    <select id="picker" title="Chọn bài để sửa"></select>
+    <button class="btn" id="publish">Đăng</button>
+    <button class="btn primary hidden" id="publish-confirm">Xác nhận đăng</button>
+  </header>
+
+  <div class="toolbar" id="toolbar">
+    <button data-cmd="bold"      title="Đậm (Ctrl+B)"><strong>B</strong></button>
+    <button data-cmd="italic"    title="Nghiêng (Ctrl+I)"><em>I</em></button>
+    <span class="sep"></span>
+    <button data-cmd="h2"        title="Tiêu đề mục">H2</button>
+    <button data-cmd="h3"        title="Tiêu đề mục con">H3</button>
+    <span class="sep"></span>
+    <button data-cmd="quote"     title="Trích dẫn">❝</button>
+    <button data-cmd="ul"        title="Danh sách">•</button>
+    <button data-cmd="ol"        title="Danh sách đánh số">1.</button>
+    <span class="sep"></span>
+    <button data-cmd="link"      title="Đường dẫn (Ctrl+K)">Link</button>
+    <button data-cmd="footnote"  title="Chú thích cuối trang">Chú thích</button>
+    <button data-cmd="hr"        title="Đường ngăn cách">———</button>
+    <span class="grow"></span>
+    <button data-cmd="logout"    title="Xoá token khỏi trình duyệt này">Đăng xuất</button>
+  </div>
+
+  <main class="split">
+    <textarea id="editor" placeholder="Viết ở đây…" spellcheck="true"></textarea>
+    <iframe id="preview" title="Xem trước"></iframe>
+  </main>
+
+  <footer class="status">
+    <span id="slug-info"></span>
+    <span id="draft-info"></span>
+    <span class="grow"></span>
+    <span id="msg"></span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
