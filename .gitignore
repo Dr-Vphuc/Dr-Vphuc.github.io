@@ -1,0 +1,9 @@
+# Ảnh gốc Butaev gửi, chưa tách nền. Giữ trên máy để sau này cần dựng lại
+# bản .webp thì có bản gốc, nhưng không đẩy lên GitHub: trang web không
+# dùng đến nó, mà đẩy lên là nó công khai ở dr-vphuc.github.io/my-art.jpg.
+my-art.jpg
+
+# Font gốc cũng vậy — repo chỉ chứa bản đã cắt còn 5 chữ trong fonts/.
+# Xem tools/lam-font-chu-ky.py.
+*.otf
+*.ttf
