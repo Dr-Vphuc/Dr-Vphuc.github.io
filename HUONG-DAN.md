@@ -107,11 +107,13 @@ tương ứng trong `index.html`, rồi commit.
 
 ```
 .nojekyll              tắt Jekyll của GitHub Pages — đừng xoá
-index.html             trang chủ; danh sách bài nằm giữa hai dấu mốc
+index.html             trang chủ: bìa + danh sách bài. Danh sách nằm giữa
                        <!--POSTS_START--> và <!--POSTS_END--> (đừng xoá)
+art/                   tranh bìa
 about.html             trang giới thiệu, sửa tay
 404.html               trang báo không tìm thấy
-style.css              toàn bộ giao diện, khoảng 200 dòng
+style.css              toàn bộ giao diện
+theme.js               nút chuyển sáng / tối
 posts/<slug>/index.md    bản gốc bạn soạn
 posts/<slug>/index.html  bản người đọc xem (không cần JavaScript)
 write/                 trang soạn bài — chỉ mình bạn dùng
@@ -120,6 +122,46 @@ write/                 trang soạn bài — chỉ mình bạn dùng
 Mỗi lần đăng, trang soạn bài ghi cả ba file (`index.md`, `index.html`,
 `index.html` ở gốc) trong **đúng một commit**, nên không có chuyện bài đã lên
 mà trang chủ chưa cập nhật.
+
+## Thay tranh bìa
+
+Hiện đang dùng hình tạm `art/spiral-placeholder.svg`. Để thay bằng tranh thật:
+
+1. Đặt file vào `art/`. **Phải có nền trong suốt** — PNG có alpha hoặc SVG.
+   File JPEG nền trắng sẽ hiện thành một ô chữ nhật trắng trên nền giấy.
+2. Trong `index.html`, sửa `src`, `width`, `height` của thẻ `<img>` trong
+   khối `.hero-art`. Điền đúng kích thước thật của file để trang không bị
+   giật lúc tải.
+3. Viết `alt` mô tả tranh (đang để trống vì hình tạm không có gì để mô tả).
+4. Nếu tranh của người khác, mở dòng ghi nguồn đang bị chú thích ở chân
+   trang `index.html`.
+
+Chế độ tối tự đảo màu tranh (`filter: invert`), nên tranh nét đen trên nền
+trong suốt là hợp nhất. Tranh nhiều màu thì phải sửa lại quy tắc đó trong
+`style.css`, mục `.hero-art img`.
+
+Bề rộng hiển thị tối đa 360px. Muốn nét sắc trên màn hình retina thì file
+gốc cần ít nhất 720px, tốt nhất là 1080px trở lên.
+
+## Chế độ sáng / tối
+
+Mặc định trang nghe theo hệ điều hành: máy đang để dark mode thì trang ra nền
+tối. Nút hình mặt trăng / mặt trời ở góc trên bên phải cho người đọc chọn khác
+đi, và lựa chọn đó nhớ lại trong `localStorage` của riêng máy họ.
+
+Muốn quay về "theo hệ thống": mở DevTools → Console, gõ
+`localStorage.removeItem('theme')` rồi tải lại.
+
+Đổi màu thì sửa hai dòng `--l-*` (sáng) và `--d-*` (tối) ở đầu `style.css`.
+Hai khối `@media (prefers-color-scheme: dark)` và `:root[data-theme="dark"]`
+bên dưới chỉ chọn dùng bảng nào — **đừng đặt mã màu vào đó**, và đừng đảo thứ
+tự hai khối, vì chúng cùng độ ưu tiên nên khối sau thắng.
+
+Muốn bỏ hẳn chế độ tối: xoá hai khối đó, xoá `theme.js`, và xoá thẻ `<button
+class="theme-toggle">` trong các file HTML (kể cả bản mẫu trong `write/app.js`).
+
+Trang `/write/` có bảng màu riêng và luôn theo hệ điều hành — nó là công cụ
+của bạn, không phải mặt tiền của site.
 
 ## Xem thử trên máy trước khi push
 
@@ -137,8 +179,11 @@ trực tiếp) vì các đường dẫn trong site bắt đầu bằng `/`.
 - **Tìm kiếm**: [Pagefind](https://pagefind.app) — chạy phía trình duyệt.
 - **Tên miền riêng**: mua tên miền, thêm file `CNAME` chứa tên miền, trỏ DNS
   theo hướng dẫn của GitHub Pages.
-- **Đổi font**: thêm `<link>` Google Fonts vào các file HTML rồi sửa biến
-  `--serif` trong `style.css`. Chọn font có bộ ký tự Vietnamese.
+- **Đổi font**: sửa biến `--serif` / `--ui` / `--script` trong `style.css`
+  và thẻ `<link>` Google Fonts trong các file HTML. **Kiểm tra font có bộ
+  `vietnamese` không** — nhiều font phổ biến không có (Poppins, Lato,
+  Josefin Sans...), chữ tiếng Việt sẽ rơi về font hệ thống giữa chừng.
+  Cách kiểm tra: mở link CSS của Google Fonts, tìm chuỗi `U+1EA0`.
 - **Chuyển sang Hugo/Astro**: các file `posts/*/index.md` đã có sẵn frontmatter
   `title` / `date`, copy thẳng sang là chạy. Đường dẫn `/posts/<slug>/` cũng
   trùng với cách Hugo và Astro sinh URL, nên link cũ không chết.

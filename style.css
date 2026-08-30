@@ -4,12 +4,30 @@
    --------------------------------------------------------------- */
 
 :root {
-  --bg:     #fbfaf7;
-  --fg:     #1f1e1c;
-  --muted:  #6f6a63;
-  --rule:   #e5e1d8;
-  --link:   #8a3d2c;
-  --accent: #f3ede2;
+  /* Hai bảng màu định nghĩa một lần ở đây. Đổi màu site thì sửa mấy dòng
+     này, đừng sửa ở hai khối chọn bảng bên dưới. */
+  --l-bg:#fbfaf7; --l-fg:#1f1e1c; --l-muted:#6f6a63;
+  --l-rule:#e5e1d8; --l-link:#8a3d2c; --l-accent:#f3ede2;
+
+  --d-bg:#141312; --d-fg:#e6e2da; --d-muted:#948e84;
+  --d-rule:#2e2c28; --d-link:#d99b7f; --d-accent:#201e1b;
+
+  /* Mặc định: bảng sáng. */
+  color-scheme: light;
+  --bg:     var(--l-bg);
+  --fg:     var(--l-fg);
+  --muted:  var(--l-muted);
+  --rule:   var(--l-rule);
+  --link:   var(--l-link);
+  --accent: var(--l-accent);
+
+  /* Tranh bìa là nét đen trên nền trong suốt; chế độ tối đảo lại thành nét
+     trắng, hạ sáng một chút cho đỡ chói. */
+  --art-filter: none;
+
+  /* Nút chuyển chế độ hiện biểu tượng của cái nó sẽ chuyển SANG. */
+  --icon-sun: none;
+  --icon-moon: block;
 
   /* Bề rộng cột chữ. Đừng nới rộng quá — mắt đọc dòng dài sẽ mỏi. */
   --measure: 38rem;
@@ -19,17 +37,37 @@
      một thẻ <link> vào các file HTML rồi sửa dòng này. */
   --serif: Cambria, Constantia, "Palatino Linotype", "Times New Roman", "Noto Serif", Georgia, serif;
   --sans:  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Chữ ký "Autos". Parisienne không có dấu tiếng Việt — chỉ dùng cho tên site,
+     đừng bao giờ đặt chữ tiếng Việt vào font này. */
+  --script: "Parisienne", "Segoe Script", cursive;
+  /* Nav và tagline. Be Vietnam Pro là sans hình học, có đầy đủ dấu tiếng Việt
+     (Poppins trông tương tự nhưng KHÔNG có bộ vietnamese — đừng đổi sang nó). */
+  --ui:     "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Hai khối dưới đây chỉ CHỌN bảng màu, không định nghĩa màu mới.
+   Chúng giống hệt nhau, và có cùng độ ưu tiên — nên thứ tự quyết định:
+   khối [data-theme="dark"] phải nằm SAU khối @media. */
+
+/* Chưa bấm nút: nghe theo hệ điều hành. */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg:     #141312;
-    --fg:     #e6e2da;
-    --muted:  #948e84;
-    --rule:   #2e2c28;
-    --link:   #d99b7f;
-    --accent: #201e1b;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: var(--d-bg); --fg: var(--d-fg); --muted: var(--d-muted);
+    --rule: var(--d-rule); --link: var(--d-link); --accent: var(--d-accent);
+    --art-filter: invert(1) brightness(.92);
+    --icon-sun: block; --icon-moon: none;
   }
+}
+
+/* Đã bấm nút chọn tối. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--d-bg); --fg: var(--d-fg); --muted: var(--d-muted);
+  --rule: var(--d-rule); --link: var(--d-link); --accent: var(--d-accent);
+  --art-filter: invert(1) brightness(.92);
+  --icon-sun: block; --icon-moon: none;
 }
 
 * { box-sizing: border-box; }
@@ -65,10 +103,21 @@ a:hover { text-decoration-style: dotted; }
   margin-bottom: 2.5rem;
 }
 
+/* Hàng trên cùng: tên site bên trái, nút chuyển chế độ bên phải. */
+.site-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Trên trang bài viết, tên site thu nhỏ lại thành một chữ ký ở góc —
+   cùng con chữ với bìa trang chủ, nên hai nơi vẫn là một. */
 .site-title {
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: .01em;
+  font-family: var(--script);
+  font-size: 2.1rem;
+  line-height: 1;
+  font-weight: 400;
   color: var(--fg);
   text-decoration: none;
 }
@@ -206,3 +255,124 @@ a:hover { text-decoration-style: dotted; }
   font-size: .82rem;
 }
 .site-footer p { margin: 0; }
+
+/* --- Bìa trang chủ ------------------------------------------------
+   Không có khối màu riêng: nền chạy liền một mạch từ bìa xuống phần
+   đọc, nên bìa được định nghĩa bằng khoảng trống chứ không bằng đường
+   viền. Bề ngang rộng hơn cột chữ bên dưới — mặt báo rộng, cột đọc hẹp.
+   ------------------------------------------------------------------ */
+
+.hero {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 1.6rem 0 1rem;
+}
+
+.hero-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: .4rem;
+  font-family: var(--ui);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.hero-nav a {
+  padding: .5rem .85rem;
+  border: 1px solid transparent;
+  color: var(--muted);
+  text-decoration: none;
+}
+.hero-nav a:hover { color: var(--link); }
+.hero-nav a[aria-current="page"] { border-color: var(--rule); color: var(--fg); }
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  min-height: 24rem;
+  padding: 1rem 0 3rem;
+}
+
+/* Khối chữ nằm hơi thấp so với tâm — chi tiết nhỏ này là thứ khiến bố
+   cục trông có chủ ý thay vì rơi vào mặc định căn giữa. */
+.hero-text { flex: 1 1 auto; padding-top: 3.5rem; }
+
+.wordmark {
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(3.6rem, 9vw, 5.8rem);
+  line-height: .95;
+  margin: 0;
+  color: var(--fg);
+}
+
+.hero-tagline {
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin: .9rem 0 0;
+}
+
+.hero-art { flex: 0 0 auto; width: min(42vw, 360px); }
+.hero-art img { display: block; width: 100%; height: auto; filter: var(--art-filter); }
+
+@media (max-width: 46rem) {
+  .hero-inner {
+    flex-direction: column-reverse;   /* chữ lên trên, tranh xuống dưới */
+    align-items: flex-start;
+    gap: 1.5rem;
+    min-height: 0;
+    padding-bottom: 2rem;
+  }
+  .hero-text { padding-top: 0; }
+  .hero-art { width: min(62vw, 260px); align-self: center; }
+}
+
+/* Vạch ngăn giữa bìa và danh sách bài — nền liền mạch nên cần một
+   đường mảnh để mắt biết chỗ nội dung bắt đầu. */
+.posts { border-top: 1px solid var(--rule); padding-top: .4rem; }
+
+/* --- Nút chuyển sáng / tối ----------------------------------------
+   Nút hiện biểu tượng của chế độ nó sẽ chuyển SANG: đang sáng thì hiện
+   mặt trăng. Việc chọn hiện icon nào do CSS lo (biến --icon-sun /
+   --icon-moon ở đầu file), nên nó đúng ngay từ lúc trang vẽ ra, kể cả
+   khi người đọc chưa bấm gì và đang theo hệ điều hành.
+   ------------------------------------------------------------------ */
+
+.theme-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.theme-toggle:hover { color: var(--fg); border-color: var(--rule); }
+.theme-toggle:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-toggle .i-sun  { display: var(--icon-sun); }
+.theme-toggle .i-moon { display: var(--icon-moon); }
+
+/* Trong hàng nav của bìa, nút đứng sát mấy mục còn lại. */
+.hero-nav .theme-toggle { margin-left: .2rem; }

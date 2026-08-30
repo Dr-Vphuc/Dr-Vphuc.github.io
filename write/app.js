@@ -10,7 +10,7 @@ const CONFIG = {
   owner:     'Dr-Vphuc',                 // tên tài khoản GitHub
   repo:      'Dr-Vphuc.github.io',       // tên repo
   branch:    'main',                               // nhánh chính (repo cũ có thể là 'master')
-  siteTitle: 'Ghi chép triết học',
+  siteTitle: 'Autos',
   author:    '',                                   // để trống thì cuối trang chỉ hiện tên site
 };
 
@@ -130,12 +130,23 @@ function buildPostHtml({ title, date, updated, bodyMd }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)} — ${escapeHtml(CONFIG.siteTitle)}</title>
 <meta name="description" content="${escapeHtml(excerpt(bodyMd))}">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600&family=Parisienne&display=swap">
 <link rel="stylesheet" href="/style.css">
+<script src="/theme.js" defer></script>
 </head>
 <body>
 
 <header class="site-header">
-  <a class="site-title" href="/">${escapeHtml(CONFIG.siteTitle)}</a>
+  <div class="site-header-row">
+    <a class="site-title" href="/">${escapeHtml(CONFIG.siteTitle)}</a>
+    <button class="theme-toggle" type="button" aria-label="Chuyển chế độ sáng tối">
+      <svg class="i-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.1A6.1 6.1 0 0 1 5.9 2.4 6.1 6.1 0 1 0 13.6 10.1Z"/></svg>
+      <svg class="i-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.3"/><path d="M8 .8v1.4M8 13.8v1.4M.8 8h1.4M13.8 8h1.4M2.9 2.9l1 1M12.1 12.1l1 1M2.9 13.1l1-1M12.1 3.9l1-1"/></svg>
+    </button>
+  </div>
 </header>
 
 <main>
