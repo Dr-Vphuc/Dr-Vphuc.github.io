@@ -123,25 +123,67 @@ Mỗi lần đăng, trang soạn bài ghi cả ba file (`index.md`, `index.html`
 `index.html` ở gốc) trong **đúng một commit**, nên không có chuyện bài đã lên
 mà trang chủ chưa cập nhật.
 
-## Thay tranh bìa
+## Tranh bìa
 
-Hiện đang dùng hình tạm `art/spiral-placeholder.svg`. Để thay bằng tranh thật:
+Đang dùng `art/spiral-of-life.webp` — *The Spiral of Life* của Alexander Butaev,
+đã xin phép tác giả. Dòng ghi nguồn nằm ở chân trang `index.html`, **đừng xoá**.
 
-1. Đặt file vào `art/`. **Phải có nền trong suốt** — PNG có alpha hoặc SVG.
-   File JPEG nền trắng sẽ hiện thành một ô chữ nhật trắng trên nền giấy.
-2. Trong `index.html`, sửa `src`, `width`, `height` của thẻ `<img>` trong
-   khối `.hero-art`. Điền đúng kích thước thật của file để trang không bị
-   giật lúc tải.
-3. Viết `alt` mô tả tranh (đang để trống vì hình tạm không có gì để mô tả).
-4. Nếu tranh của người khác, mở dòng ghi nguồn đang bị chú thích ở chân
-   trang `index.html`.
+File gốc `my-art.jpg` là ảnh chụp bản vẽ trên giấy, nên không dùng thẳng được:
+nền giấy sẽ thành một ô chữ nhật đè lên nền site, và ánh sáng lúc chụp không
+đều (góc trên sáng hơn góc dưới khoảng 50 mức). Bản đang dùng đã qua ba bước:
 
-Chế độ tối tự đảo màu tranh (`filter: invert`), nên tranh nét đen trên nền
-trong suốt là hợp nhất. Tranh nhiều màu thì phải sửa lại quy tắc đó trong
-`style.css`, mục `.hero-art img`.
+1. **San phẳng ánh sáng** — ước lượng trường sáng bằng bộ lọc max rồi chia ra,
+   nếu không phần dưới ảnh sẽ còn một mảng xám.
+2. **Chuyển độ đậm thành độ đục** — nét càng đậm càng đặc, giấy thành trong
+   suốt. Ngưỡng: trắng 242, đen 85. Nhẹ tay hơn thì lộ hạt giấy khi đảo màu;
+   mạnh tay hơn thì nét mỏng đi.
+3. **Nén WebP** chất lượng 80, alpha 60 → 131 KB (ảnh gốc 175 KB).
 
-Bề rộng hiển thị tối đa 360px. Muốn nét sắc trên màn hình retina thì file
-gốc cần ít nhất 720px, tốt nhất là 1080px trở lên.
+Vì nét nằm trên nền trong suốt nên chế độ tối chỉ cần đảo màu là ra nét trắng,
+không phải xử lý gì thêm.
+
+Quay lại hình tạm: đổi `src` về `/art/spiral-placeholder.svg` và `height` về
+`857` trong `index.html`.
+
+### Thay bằng tranh khác
+
+1. Đặt file vào `art/`. **Phải có nền trong suốt** (WebP/PNG có alpha, hoặc SVG).
+   Ảnh chụp giấy thì phải tách nền như trên trước.
+2. Sửa `src`, `width`, `height` của thẻ `<img>` trong khối `.hero-art`. Điền
+   đúng kích thước thật của file để trang không giật lúc tải.
+3. Viết lại `alt` mô tả tranh.
+4. Sửa hoặc xoá dòng ghi nguồn ở chân trang cho khớp.
+
+Bề rộng hiển thị là `min(42vw, 66vh, 600px)` — giới hạn theo cả chiều ngang
+lẫn chiều cao khung nhìn, để tranh không bao giờ đẩy mũi cuộn ra khỏi màn hình.
+Tranh nhiều màu thì phải sửa `--art-filter` trong `style.css` — quy tắc đảo màu
+hiện tại chỉ hợp với tranh đơn sắc.
+
+## Bìa toàn màn hình
+
+Bìa cao đúng một khung nhìn (`min-height: 100svh`), nên danh sách bài nằm dưới
+nếp gấp và phải cuộn mới thấy. Mũi tên góc dưới bên trái nhảy tới đó.
+
+Vì bìa lấp kín màn hình nên **phải** có dấu hiệu báo bên dưới còn nội dung —
+nếu bỏ mũi tên đi, một phần người đọc sẽ tưởng trang chỉ có bấy nhiêu.
+
+Muốn bỏ chế độ toàn màn hình, quay về bìa ngắn như cũ: trong `style.css` xoá
+hai dòng `min-height` của `.hero`, và đặt lại `min-height: 24rem` cho
+`.hero-inner`.
+
+## Về chuyện chống sao chép tranh
+
+Ảnh bìa có đặt `pointer-events: none`, nên chuột phải không hiện "Lưu hình ảnh
+thành...", và không kéo thả ảnh ra ngoài được.
+
+**Đây là gờ giảm tốc, không phải khoá.** Không tồn tại cách chặn thật, vì trình
+duyệt bắt buộc phải tải trọn ảnh về máy người xem mới vẽ được. Vẫn lấy được
+bằng: chụp màn hình, gõ thẳng `…/art/spiral-of-life.webp`, mở tab Network của
+DevTools, hoặc tắt JavaScript. Đừng đưa lên đây thứ gì mà bị sao chép là thiệt
+hại thật.
+
+Thứ bảo vệ thật sự là dòng ghi nguồn ở chân trang, và chữ ký của Butaev nằm sẵn
+trong tranh ở góc phải dưới.
 
 ## Chế độ sáng / tối
 

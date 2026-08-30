@@ -255,6 +255,7 @@ a:hover { text-decoration-style: dotted; }
   font-size: .82rem;
 }
 .site-footer p { margin: 0; }
+.site-footer p + p { margin-top: .35rem; }   /* dòng ghi nguồn tranh */
 
 /* --- Bìa trang chủ ------------------------------------------------
    Không có khối màu riêng: nền chạy liền một mạch từ bìa xuống phần
@@ -262,10 +263,17 @@ a:hover { text-decoration-style: dotted; }
    viền. Bề ngang rộng hơn cột chữ bên dưới — mặt báo rộng, cột đọc hẹp.
    ------------------------------------------------------------------ */
 
+/* Bìa chiếm trọn một màn hình: nav bám trên, khối bìa giữa, mũi cuộn dưới.
+   Dùng svh vì trên điện thoại 100vh tính cả phần thanh địa chỉ sẽ trượt
+   khỏi màn — vh để làm bản dự phòng cho trình duyệt cũ. */
 .hero {
-  max-width: 58rem;
+  max-width: 64rem;
   margin: 0 auto;
   padding: 1.6rem 0 1rem;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
 }
 
 .hero-nav {
@@ -288,21 +296,21 @@ a:hover { text-decoration-style: dotted; }
 .hero-nav a[aria-current="page"] { border-color: var(--rule); color: var(--fg); }
 
 .hero-inner {
+  flex: 1 1 auto;              /* nuốt hết chiều cao còn thừa */
   display: flex;
   align-items: center;
   gap: 2.5rem;
-  min-height: 24rem;
-  padding: 1rem 0 3rem;
+  padding: 1rem 0 1.5rem;
 }
 
 /* Khối chữ nằm hơi thấp so với tâm — chi tiết nhỏ này là thứ khiến bố
    cục trông có chủ ý thay vì rơi vào mặc định căn giữa. */
-.hero-text { flex: 1 1 auto; padding-top: 3.5rem; }
+.hero-text { flex: 1 1 auto; min-width: 0; padding-top: 3.5rem; }
 
 .wordmark {
   font-family: var(--script);
   font-weight: 400;
-  font-size: clamp(3.6rem, 9vw, 5.8rem);
+  font-size: clamp(3.4rem, 7.5vw, 6.6rem);
   line-height: .95;
   margin: 0;
   color: var(--fg);
@@ -317,24 +325,45 @@ a:hover { text-decoration-style: dotted; }
   margin: .9rem 0 0;
 }
 
-.hero-art { flex: 0 0 auto; width: min(42vw, 360px); }
-.hero-art img { display: block; width: 100%; height: auto; filter: var(--art-filter); }
+.hero-art { flex: 0 0 auto; width: min(42vw, 66vh, 600px); }
+.hero-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: var(--art-filter);
+
+  /* Gờ giảm tốc, KHÔNG phải khoá. Ảnh vẫn nằm trong máy người xem — buộc
+     phải thế, không tải về thì không vẽ ra được. pointer-events: none làm
+     con trỏ đi xuyên qua ảnh, nên chuột phải rơi vào thẻ div bao ngoài và
+     trình duyệt không hiện "Lưu hình ảnh thành..." nữa; kéo thả ra ngoài
+     cũng không nắm được. Chụp màn hình, gõ thẳng đường dẫn file, hay mở
+     tab Network thì vẫn lấy được như thường — đừng trông vào cái này.
+     Thứ bảo vệ thật là dòng ghi nguồn ở chân trang và chữ ký của tác giả
+     nằm sẵn trong tranh. */
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 
 @media (max-width: 46rem) {
   .hero-inner {
     flex-direction: column-reverse;   /* chữ lên trên, tranh xuống dưới */
     align-items: flex-start;
-    gap: 1.5rem;
-    min-height: 0;
-    padding-bottom: 2rem;
+    justify-content: center;
+    gap: 1.8rem;
+    padding-bottom: 1rem;
   }
   .hero-text { padding-top: 0; }
-  .hero-art { width: min(62vw, 260px); align-self: center; }
+  .hero-art { width: min(78vw, 48vh, 340px); align-self: center; }
 }
 
 /* Vạch ngăn giữa bìa và danh sách bài — nền liền mạch nên cần một
    đường mảnh để mắt biết chỗ nội dung bắt đầu. */
-.posts { border-top: 1px solid var(--rule); padding-top: .4rem; }
+.posts {
+  border-top: 1px solid var(--rule);
+  padding-top: .4rem;
+  scroll-margin-top: 2rem;    /* nhảy tới đây thì chừa một khoảng thở */
+}
 
 /* --- Nút chuyển sáng / tối ----------------------------------------
    Nút hiện biểu tượng của chế độ nó sẽ chuyển SANG: đang sáng thì hiện
@@ -376,3 +405,55 @@ a:hover { text-decoration-style: dotted; }
 
 /* Trong hàng nav của bìa, nút đứng sát mấy mục còn lại. */
 .hero-nav .theme-toggle { margin-left: .2rem; }
+
+/* --- Mũi cuộn ------------------------------------------------------
+   Bìa chiếm trọn màn hình nên không còn mẩu nội dung nào ló ra ở mép
+   dưới để báo rằng bên dưới còn bài. Không có dấu hiệu này thì một số
+   người đọc sẽ tưởng trang chỉ có bấy nhiêu.
+   ------------------------------------------------------------------- */
+
+.hero-scroll {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-self: flex-start;
+  padding: .5rem .6rem 1rem 0;
+  color: var(--muted);
+  text-decoration: none;
+}
+.hero-scroll:hover { color: var(--fg); }
+.hero-scroll:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+
+.hero-scroll svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: nudge 2.4s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(3px); }
+}
+
+html { scroll-behavior: smooth; }
+
+/* Người đã tắt hiệu ứng chuyển động trong hệ điều hành thì tôn trọng họ:
+   bỏ cả nhịp nhún lẫn cuộn mượt. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll svg { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Màn hình thấp (laptop nhỏ, cửa sổ bị thu): bìa vẫn full nhưng bóp lại
+   cho khỏi tràn. */
+@media (max-height: 34rem) and (min-width: 46rem) {
+  .hero-inner { padding: .5rem 0; gap: 1.6rem; }
+  .hero-text { padding-top: 1.5rem; }
+  .wordmark { font-size: clamp(2.6rem, 6vw, 4rem); }
+  .hero-tagline { font-size: .9rem; margin-top: .5rem; }
+  .hero-scroll { padding-bottom: .4rem; }
+}

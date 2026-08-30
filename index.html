@@ -30,18 +30,23 @@
       <p class="hero-tagline">Some thoughts on life</p>
     </div>
 
-    <!-- HÌNH TẠM. Thay bằng tranh thật: đổi src, width, height ở dòng dưới.
-         Tranh phải có nền trong suốt (PNG có alpha hoặc SVG), nếu không sẽ
-         hiện ra một ô chữ nhật trắng trên nền giấy.
-         Lúc thay thì viết alt mô tả tranh, và mở dòng ghi nguồn ở chân trang. -->
+    <!-- Bản đã tách nền từ my-art.jpg: nét mực trên nền trong suốt, nên nó
+         nằm trên nền giấy mà không thành ô chữ nhật, và đảo màu được sang
+         chế độ tối. Muốn quay lại hình tạm thì đổi src về
+         /art/spiral-placeholder.svg và height về 857. -->
     <div class="hero-art">
-      <img src="/art/spiral-placeholder.svg" width="736" height="857" alt="">
+      <img src="/art/spiral-of-life.webp" width="736" height="851" decoding="async"
+           alt="Vòng xoắn ốc gồm hàng trăm hình người: trẻ sơ sinh ở tâm, lớn dần ra ngoài thành người trưởng thành, rồi già đi và tan thành xương sọ ở phía dưới.">
     </div>
   </div>
+
+  <a class="hero-scroll" href="#bai-viet" aria-label="Xuống phần bài viết">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v10M4 9l4 4 4-4"/></svg>
+  </a>
 </header>
 
 <main>
-  <div class="posts">
+  <div class="posts" id="bai-viet">
     <ul class="post-list">
 <!--POSTS_START-->
     <li><time datetime="2026-08-30">30 tháng 8, 2026</time><a href="/posts/vi-du-mot-bai-viet/">Ví dụ một bài viết</a></li>
@@ -52,7 +57,7 @@
 
 <footer class="site-footer">
   <p>Autos</p>
-  <!-- <p>Tranh bìa: <em>The Spiral of Life</em> — Alexander Butaev</p> -->
+  <p>Tranh bìa: <em>The Spiral of Life</em> — Alexander Butaev, dùng với sự cho phép của tác giả.</p>
 </footer>
 
 </body>
