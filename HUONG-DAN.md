@@ -110,6 +110,8 @@ tương ứng trong `index.html`, rồi commit.
 index.html             trang chủ: bìa + danh sách bài. Danh sách nằm giữa
                        <!--POSTS_START--> và <!--POSTS_END--> (đừng xoá)
 art/                   tranh bìa
+fonts/                 font chữ ký, bản đã cắt còn 5 chữ cái
+tools/                 script cắt font — không ảnh hưởng trang web
 about.html             trang giới thiệu, sửa tay
 404.html               trang báo không tìm thấy
 style.css              toàn bộ giao diện
@@ -184,6 +186,51 @@ hại thật.
 
 Thứ bảo vệ thật sự là dòng ghi nguồn ở chân trang, và chữ ký của Butaev nằm sẵn
 trong tranh ở góc phải dưới.
+
+## Chữ ký
+
+Dòng `Some thoughts on life` ở bìa có kèm chữ ký viết tay `Vphuc`, nằm trong
+`index.html`:
+
+```html
+<p class="hero-tagline"><span>Some thoughts on life</span><span class="sig">Vphuc</span></p>
+```
+
+Font là **MTD Verona Lotte** (bản Việt hóa của *Verona* — Yasir Ekinci).
+
+### Font này được cắt nhỏ, và đó là cố ý
+
+File gốc `F:utos\MTD Verona Lotte.otf` nặng 672 KB và **không nằm trong
+repo**. Thứ được đẩy lên mạng là `fonts/verona-lotte-sig.woff2`, 6 KB, chỉ
+chứa đúng năm chữ cái **V p h u c**.
+
+Hai lý do:
+
+1. Trang tải nhanh hơn — 6 KB thay vì 672 KB cho một chữ ký.
+2. Repo này công khai. Đẩy nguyên bản `.otf` lên là phát cho bất kỳ ai cả
+   bộ font của người khác. Bản cắt năm chữ thì không dùng lại được vào
+   việc gì.
+
+**Muốn đổi tên trong chữ ký** thì phải làm hai bước, thiếu bước nào cũng
+hỏng: sửa chữ trong `index.html`, rồi sửa `CHU_KY` trong
+`tools/lam-font-chu-ky.py` và chạy:
+
+```
+pip install fonttools brotli
+python tools/lam-font-chu-ky.py
+```
+
+Không chạy lại thì chữ mới không có trong font, trình duyệt sẽ rơi về
+font dự phòng (Parisienne) cho riêng mấy chữ đó.
+
+### Viết thường, không viết hoa
+
+Font này viết hoa thì các chữ cái móc vào nhau: `VPHUC` đọc ra thành
+"VP ff CIC". Chữ thường mới ra đúng tên. Đó là lý do khối
+`.hero-tagline .sig` trong `style.css` không còn dòng `text-transform`.
+
+Cũng vì nét rất mảnh nên cỡ chữ phải to: `2.8rem`. Nhỏ hơn 2rem thì trên
+màn hình thường nó nhạt gần như mất.
 
 ## Chế độ sáng / tối
 

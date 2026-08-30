@@ -3,6 +3,19 @@
    Sửa mấy biến màu ở dưới là đổi được cả trang.
    --------------------------------------------------------------- */
 
+/* Bản cắt của "MTD Verona Lotte" (Verona — Yasir Ekinci, Việt hóa bởi MTD),
+   chỉ còn đúng 5 chữ V p h u c — 6 KB thay vì 672 KB. Đổi tên trong chữ ký
+   thì phải chạy lại tools/lam-font-chu-ky.py.
+   font-display: block — thà để chữ chưa hiện trong tích tắc còn hơn hiện sai
+   nét rồi nhảy, vì font dự phòng khác hẳn về hình dáng. */
+@font-face {
+  font-family: "Verona Lotte Sig";
+  src: url("/fonts/verona-lotte-sig.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
 :root {
   /* Hai bảng màu định nghĩa một lần ở đây. Đổi màu site thì sửa mấy dòng
      này, đừng sửa ở hai khối chọn bảng bên dưới. */
@@ -44,6 +57,9 @@
   /* Nav và tagline. Be Vietnam Pro là sans hình học, có đầy đủ dấu tiếng Việt
      (Poppins trông tương tự nhưng KHÔNG có bộ vietnamese — đừng đổi sang nó). */
   --ui:     "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Chữ ký. Dự phòng là Parisienne (đã tải sẵn cho chữ "Autos") để nếu
+     font kia hỏng thì vẫn còn nét viết tay chứ không nhảy về chữ in. */
+  --sig:    "Verona Lotte Sig", "Parisienne", "Segoe Script", cursive;
 }
 
 /* Hai khối dưới đây chỉ CHỌN bảng màu, không định nghĩa màu mới.
@@ -317,13 +333,40 @@ a:hover { text-decoration-style: dotted; }
 }
 
 .hero-tagline {
+  /* Hàng ngang, căn theo đường kẻ chân chữ (baseline) chứ không căn giữa —
+     hai cỡ chữ chênh nhau gần gấp ba, căn giữa sẽ lệch mắt.
+     flex-wrap lo luôn máy hẹp: chữ ký tự xuống dòng riêng. */
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem 1.4rem;
   font-family: var(--ui);
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: .04em;
   color: var(--muted);
-  margin: .9rem 0 0;
+  margin: .6rem 0 0;
 }
+
+/* Chữ ký. Nét mảnh như sợi chỉ nên bắt buộc phải to — dưới 2rem thì trên
+   màn hình thường nó gần như biến mất. 2.8rem là cỡ nhỏ nhất mà nét còn đứng.
+   Không dùng chữ in hoa: font này viết hoa thì V, P, H dính móc vào nhau,
+   đọc ra thành "VP ff CIC". Chữ thường mới ra đúng chữ "Vphuc".
+   Cả cụm chữ nằm TRÊN đường kẻ chân (điểm thấp nhất cách kẻ .037em) nên
+   nó không đâm vào gì phía dưới. */
+.hero-tagline .sig {
+  font-family: var(--sig);
+  font-weight: 400;
+  font-size: 2.8rem;
+  letter-spacing: 0;
+  /* Hop cua chữ ký cố ý làm thấp hơn nét chữ nhiều, cho nét trào lên trên.
+     Nhờ thế chữ ký chui vào khoảng trống sẵn có dưới chữ "Autos" thay vì
+     đẩy cả dòng tagline tụt xuống. Phải giữ dưới .38, quá con số đó thì hộp
+     chữ ký cao hơn hộp dòng tagline và nó bắt đầu nới hàng ra trở lại. */
+  line-height: .3;
+  color: var(--fg);
+}
+
 
 .hero-art { flex: 0 0 auto; width: min(42vw, 66vh, 600px); }
 .hero-art img {
@@ -455,5 +498,6 @@ html { scroll-behavior: smooth; }
   .hero-text { padding-top: 1.5rem; }
   .wordmark { font-size: clamp(2.6rem, 6vw, 4rem); }
   .hero-tagline { font-size: .9rem; margin-top: .5rem; }
+  .hero-tagline .sig { font-size: 2.1rem; }
   .hero-scroll { padding-bottom: .4rem; }
 }
