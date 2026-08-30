@@ -1,24 +1,21 @@
 /* Nút chuyển sáng / tối.
  *
- * Ba trạng thái, nhưng người đọc chỉ thấy hai: khi chưa bấm gì, trang nghe
- * theo hệ điều hành (CSS lo, không cần JS). Bấm một cái là ghi đè, và lựa
- * chọn đó nằm trong localStorage của riêng máy họ.
+ * Trang luôn mở ra ở nền sáng — kể cả khi máy người đọc đang để dark mode.
+ * Đó là chủ ý: nền giấy là bộ mặt của site, và ai cũng thấy đúng bộ mặt đó
+ * ở lần ghé đầu tiên. Bấm nút một cái là sang tối, và lựa chọn đó nằm trong
+ * localStorage của riêng máy họ, không đụng tới ai khác.
  *
  * File này chỉ xử lý cú bấm. Việc vẽ đúng màu ngay từ đầu do đoạn script
  * ngắn trong <head> của mỗi trang làm — phải chạy trước khi trang vẽ, nếu
- * không sẽ thấy một nháy trắng rồi mới đổi sang tối.
+ * không người đã chọn tối sẽ thấy một nháy trắng rồi mới đổi.
  */
 (function () {
   var root = document.documentElement;
   var KEY  = 'theme';
 
-  function systemPrefersDark() {
-    return window.matchMedia &&
-           window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-
+  /* Không hỏi hệ điều hành nữa. Chưa chọn gì nghĩa là sáng. */
   function current() {
-    return root.dataset.theme || (systemPrefersDark() ? 'dark' : 'light');
+    return root.dataset.theme === 'dark' ? 'dark' : 'light';
   }
 
   function label(btn) {
@@ -37,15 +34,4 @@
       Array.prototype.forEach.call(buttons, label);
     });
   });
-
-  /* Nếu người đọc chưa chọn gì mà đổi chế độ ở hệ điều hành, màu tự đổi theo
-     (CSS lo), nhưng nhãn của nút thì phải cập nhật ở đây. */
-  if (window.matchMedia) {
-    var mq = window.matchMedia('(prefers-color-scheme: dark)');
-    var onChange = function () {
-      if (!root.dataset.theme) Array.prototype.forEach.call(buttons, label);
-    };
-    if (mq.addEventListener) mq.addEventListener('change', onChange);
-    else if (mq.addListener) mq.addListener(onChange);
-  }
 })();

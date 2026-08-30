@@ -18,14 +18,14 @@
 
 :root {
   /* Hai bảng màu định nghĩa một lần ở đây. Đổi màu site thì sửa mấy dòng
-     này, đừng sửa ở hai khối chọn bảng bên dưới. */
+     này, đừng sửa ở khối chọn bảng bên dưới. */
   --l-bg:#fbfaf7; --l-fg:#1f1e1c; --l-muted:#6f6a63;
   --l-rule:#e5e1d8; --l-link:#8a3d2c; --l-accent:#f3ede2;
 
   --d-bg:#141312; --d-fg:#e6e2da; --d-muted:#948e84;
   --d-rule:#2e2c28; --d-link:#d99b7f; --d-accent:#201e1b;
 
-  /* Mặc định: bảng sáng. */
+  /* Mặc định, và cũng là thứ hiện ra ở lần ghé đầu tiên: bảng sáng. */
   color-scheme: light;
   --bg:     var(--l-bg);
   --fg:     var(--l-fg);
@@ -62,20 +62,14 @@
   --sig:    "Verona Lotte Sig", "Parisienne", "Segoe Script", cursive;
 }
 
-/* Hai khối dưới đây chỉ CHỌN bảng màu, không định nghĩa màu mới.
-   Chúng giống hệt nhau, và có cùng độ ưu tiên — nên thứ tự quyết định:
-   khối [data-theme="dark"] phải nằm SAU khối @media. */
+/* Khối dưới đây chỉ CHỌN bảng màu, không định nghĩa màu mới.
 
-/* Chưa bấm nút: nghe theo hệ điều hành. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: var(--d-bg); --fg: var(--d-fg); --muted: var(--d-muted);
-    --rule: var(--d-rule); --link: var(--d-link); --accent: var(--d-accent);
-    --art-filter: invert(1) brightness(.92);
-    --icon-sun: block; --icon-moon: none;
-  }
-}
+   Trang luôn mở ra ở bảng sáng, kể cả khi máy người đọc đang để dark mode.
+   Chỉ khi họ tự bấm nút mặt trăng thì mới sang tối.
+   Muốn trang nghe lại theo hệ điều hành thì chép khối này ra một bản nữa, đổi
+   bộ chọn thành :root:not([data-theme="light"]) rồi bọc trong
+   @media (prefers-color-scheme: dark), và đặt bản đó TRƯỚC khối này — hai
+   khối cùng độ ưu tiên nên khối đứng sau thắng. */
 
 /* Đã bấm nút chọn tối. */
 :root[data-theme="dark"] {

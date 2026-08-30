@@ -234,22 +234,30 @@ màn hình thường nó nhạt gần như mất.
 
 ## Chế độ sáng / tối
 
-Mặc định trang nghe theo hệ điều hành: máy đang để dark mode thì trang ra nền
-tối. Nút hình mặt trăng / mặt trời ở góc trên bên phải cho người đọc chọn khác
-đi, và lựa chọn đó nhớ lại trong `localStorage` của riêng máy họ.
+Trang luôn mở ra ở nền sáng — kể cả khi máy người đọc đang để dark mode.
+Nền giấy là bộ mặt của site, nên ai cũng thấy đúng bộ mặt đó ở lần ghé đầu tiên.
+Nút hình mặt trăng ở góc trên bên phải cho họ đổi sang tối, và lựa chọn đó
+nhớ lại trong `localStorage` của riêng máy họ.
 
-Muốn quay về "theo hệ thống": mở DevTools → Console, gõ
-`localStorage.removeItem('theme')` rồi tải lại.
+Một hệ quả cần biết: nếu bạn đã từng bấm nút chọn tối trên máy mình thì
+trình duyệt vẫn nhớ, và bạn sẽ không thấy gì đổi cả. Mở DevTools → Console,
+gõ `localStorage.removeItem('theme')` rồi tải lại để xem đúng thứ khách thấy.
 
 Đổi màu thì sửa hai dòng `--l-*` (sáng) và `--d-*` (tối) ở đầu `style.css`.
-Hai khối `@media (prefers-color-scheme: dark)` và `:root[data-theme="dark"]`
-bên dưới chỉ chọn dùng bảng nào — **đừng đặt mã màu vào đó**, và đừng đảo thứ
-tự hai khối, vì chúng cùng độ ưu tiên nên khối sau thắng.
+Khối `:root[data-theme="dark"]` bên dưới chỉ chọn dùng bảng nào — **đừng đặt mã
+màu vào đó**.
 
-Muốn bỏ hẳn chế độ tối: xoá hai khối đó, xoá `theme.js`, và xoá thẻ `<button
-class="theme-toggle">` trong các file HTML (kể cả bản mẫu trong `write/app.js`).
+Muốn trang nghe lại theo hệ điều hành như trước: chép khối đó ra một bản
+nữa, đổi bộ chọn thành `:root:not([data-theme="light"])` rồi bọc trong
+`@media (prefers-color-scheme: dark)`, và đặt bản đó **trước** khối cũ — hai
+khối cùng độ ưu tiên nên khối đứng sau thắng. Trong `theme.js` thì sửa hàm
+`current()` cho nó hỏi lại `matchMedia`, không thì nhãn của nút sẽ nói sai.
 
-Trang `/write/` có bảng màu riêng và luôn theo hệ điều hành — nó là công cụ
+Muốn bỏ hẳn chế độ tối: xoá khối `:root[data-theme="dark"]`, xoá `theme.js`,
+và xoá thẻ `<button class="theme-toggle">` trong các file HTML (kể cả bản mẫu
+trong `write/app.js`).
+
+Trang `/write/` có bảng màu riêng và vẫn theo hệ điều hành — nó là công cụ
 của bạn, không phải mặt tiền của site.
 
 ## Xem thử trên máy trước khi push
