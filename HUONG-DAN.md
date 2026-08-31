@@ -79,6 +79,7 @@ Vào `/write/`:
 | Tiêu đề mục | Đặt con trỏ vào dòng, bấm **H2** (hoặc H3 cho mục con) |
 | Trích dẫn, danh sách | Bôi đen mấy dòng rồi bấm nút tương ứng |
 | Đường dẫn | Bôi đen chữ, bấm **Link** (Ctrl+K), sửa phần `https://` |
+| Ảnh | Dán bằng **Ctrl+V**, kéo thả vào ô soạn, hoặc bấm **Ảnh** |
 | Chú thích cuối trang | Đặt con trỏ trong câu, bấm **Chú thích**, gõ nội dung ở dòng cuối |
 | Đăng | Bấm **Đăng** → xem lại → **Xác nhận đăng** |
 
@@ -92,6 +93,59 @@ Bài đang viết tự lưu vào máy sau mỗi lần ngừng gõ. Đóng nhầm
 Đăng xong, GitHub Pages dựng lại mất khoảng **30–60 giây**.
 Bài mới nằm trên GitHub, chưa có trong thư mục trên máy — xem mục
 [Trước khi sửa trên máy](#trước-khi-sửa-trên-máy-kéo-bài-mới-về).
+
+### Ảnh
+
+Chụp màn hình rồi **Ctrl+V** thẳng vào ô soạn. Kéo file ảnh từ Explorer thả
+vào cũng được, hoặc bấm nút **Ảnh** nếu muốn chọn file theo lối cũ.
+
+Dán xong, dòng này hiện ra ngay chỗ con trỏ, với chữ *Chú thích* **được bôi
+đen sẵn** — gõ tiếp là đè lên luôn:
+
+```markdown
+![Chú thích](/anh/2026-08-31-a3f1c2d4-1600x1067.webp)
+```
+
+Khung bên phải hiện ảnh ngay lập tức. Ảnh lúc này mới nằm trong máy bạn thôi;
+nó lên GitHub cùng với bài, trong đúng một commit, khi bạn bấm **Đăng**.
+
+Chữ trong `![...]` vừa là lời tả cho máy đọc màn hình, vừa là dòng chú thích
+in nghiêng bên dưới ảnh — một chỗ để gõ chứ không phải hai:
+
+| Viết | Ra cái gì |
+|---|---|
+| `![Vòng xoáy của sự sống](/anh/x.webp)` | Ảnh, kèm chú thích bên dưới |
+| `![](/anh/x.webp)` | Ảnh trơ, không chú thích |
+| `![lời tả](/anh/x.webp "Chú thích")` | Khi cần tách hai thứ đó ra |
+
+Ảnh viết lẫn giữa câu văn thì vẫn chỉ là một tấm ảnh nằm trong đoạn, không có
+chú thích — muốn có chú thích thì nó phải đứng riêng một khối.
+
+**Trước khi đẩy lên, ảnh được xử lý ngay trong trình duyệt**: co về tối đa
+1600px cạnh dài rồi xuất WebP, thường còn 150–300KB. Cần thiết, vì repo là
+public và **git giữ mọi phiên bản mãi mãi** — đẩy thẳng ảnh gốc 4MB từ điện
+thoại thì vài chục bài nữa repo phình lên hàng trăm MB. Đi qua bước này ảnh
+cũng rụng luôn EXIF, tức là rụng cả toạ độ GPS mà máy ảnh điện thoại nhét vào
+mọi tấm hình — thứ không nên có trên một blog công khai.
+
+Vài điều đáng biết:
+
+- **Đóng tab giữa chừng thì ảnh vẫn còn.** Chữ nằm trong bản nháp, ảnh nằm
+  cạnh đó trong kho tạm của trình duyệt. Mở lại `/write/` là đủ cả.
+- **Ảnh `.heic` từ iPhone** thì Chrome và Firefox trên Windows không đọc được.
+  Đổi sang JPG trước, hoặc chỉnh máy chụp thành "Tương thích nhất".
+- **Ảnh trong suốt được lót nền giấy** (`#fbfaf7`, đúng màu nền sáng của site).
+  Một bức vẽ nét đen trên nền trong suốt mà để nguyên thì ở chế độ tối nó biến
+  mất hẳn — nét đen trên nền đen. Lót giấy vào thì hai chế độ nhìn như nhau.
+  Cần giữ nền trong suốt thật thì bỏ file vào `anh/` bằng git, đừng qua
+  `/write/`.
+- **GIF động và SVG** được đẩy nguyên xi, không qua bước co nhỏ — qua canvas
+  là GIF mất động, SVG mất nét, và cũng vì thế mà hai loại này vẫn giữ được
+  nền trong suốt. Nhớ tự để mắt tới dung lượng.
+- **Dán lại đúng tấm cũ** thì nó nhận ra và dùng lại file đã có, không đẩy
+  thêm bản trùng.
+- Ảnh của bài **bị xoá đi rồi vẫn nằm lại** trong `anh/`. Chưa có dọn tự động;
+  muốn gọn thì xoá tay rồi commit.
 
 ### Sửa bài đã đăng
 
@@ -114,6 +168,7 @@ tương ứng trong `index.html`, rồi commit.
 index.html             trang chủ: bìa + danh sách bài. Danh sách nằm giữa
                        <!--POSTS_START--> và <!--POSTS_END--> (đừng xoá)
 art/                   tranh bìa
+anh/                   ảnh trong bài, do trang soạn bài tự đẩy lên
 fonts/                 font chữ ký, bản đã cắt còn 5 chữ cái
 tools/                 script cắt font — không ảnh hưởng trang web
 about.html             trang giới thiệu, sửa tay
@@ -126,8 +181,13 @@ write/                 trang soạn bài — chỉ mình bạn dùng
 ```
 
 Mỗi lần đăng, trang soạn bài ghi cả ba file (`index.md`, `index.html`,
-`index.html` ở gốc) trong **đúng một commit**, nên không có chuyện bài đã lên
-mà trang chủ chưa cập nhật.
+`index.html` ở gốc) — cùng với những tấm ảnh mới trong bài — trong **đúng một
+commit**, nên không có chuyện bài đã lên mà trang chủ chưa cập nhật, hay bài
+đã lên mà ảnh còn lửng lơ.
+
+Tên ảnh có dạng `anh/2026-08-31-a3f1c2d4-1600x1067.webp`: ngày tháng cho dễ
+xếp, tám ký tự băm để hai ảnh khác nhau không đè nhau, và kích thước để lúc
+dựng trang trình duyệt biết chừa sẵn chỗ — ảnh tải xong trang không giật.
 
 ## Tranh bìa
 
@@ -377,6 +437,7 @@ trực tiếp) vì các đường dẫn trong site bắt đầu bằng `/`.
   người lạ là token, mà token chỉ nằm trong trình duyệt của bạn.
 - Repo là public, nên mọi thứ commit lên đều công khai, kể cả bài nháp.
   Nháp chưa đăng thì chỉ nằm trong máy bạn, chưa lên GitHub.
-- Chưa có upload ảnh. Tạm thời: đặt file ảnh vào `posts/<slug>/` bằng git,
-  rồi chèn `![mô tả](/posts/<slug>/ten-anh.jpg)` trong bài.
+- Ảnh chỉ chèn được từ `/write/`. Viết bài bằng tay trên máy thì phải tự bỏ
+  file vào `anh/` và tự commit — đó là cái giá của việc không dùng trình soạn,
+  không phải giới hạn của tính năng.
 - Khai báo chú thích phải nằm gọn trên **một dòng**.

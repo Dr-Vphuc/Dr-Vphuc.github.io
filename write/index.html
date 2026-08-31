@@ -82,6 +82,8 @@
     font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
     font-size: 14.5px; line-height: 1.75; color: var(--ui-fg);
   }
+  /* Đang rê ảnh lơ lửng trên ô soạn: viền đứt cho biết thả được. */
+  #editor.tha-anh { outline: 2px dashed var(--ui-accent); outline-offset: -5px; }
   #preview { flex: 1 1 50%; min-width: 0; border: 0; border-left: 1px solid var(--ui-rule); background: #fff; }
 
   /* Bản sao vô hình của ô soạn, chỉ để đo xem dòng thứ n nằm ở đâu — xem
@@ -151,6 +153,7 @@
     <button data-cmd="ol"        title="Danh sách đánh số">1.</button>
     <span class="sep"></span>
     <button data-cmd="link"      title="Đường dẫn (Ctrl+K)">Link</button>
+    <button data-cmd="image"     title="Chèn ảnh — dán bằng Ctrl+V hoặc kéo thả vào ô soạn cũng được">Ảnh</button>
     <button data-cmd="footnote"  title="Chú thích cuối trang">Chú thích</button>
     <button data-cmd="hr"        title="Đường ngăn cách">———</button>
     <span class="grow"></span>
@@ -161,6 +164,10 @@
     <textarea id="editor" placeholder="Viết ở đây…" spellcheck="true"></textarea>
     <iframe id="preview" title="Xem trước"></iframe>
   </main>
+
+  <!-- Nút "Ảnh" trên thanh công cụ bấm hộ vào đây. Dán và kéo thả không cần
+       đến nó, nhưng vẫn để cho ai quen chọn file theo lối cũ. -->
+  <input type="file" id="anh-input" accept="image/*" multiple hidden>
 
   <footer class="status">
     <span id="slug-info"></span>

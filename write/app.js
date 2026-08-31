@@ -18,12 +18,17 @@ const CONFIG = {
 
 const $ = (id) => document.getElementById(id);
 
-const b64encode = (str) => {
-  const bytes = new TextEncoder().encode(str);
+// btoa chỉ nhận chuỗi, mà String.fromCharCode(...cả_mảng) thì tràn ngăn xếp
+// ngay với một tấm ảnh vài trăm KB. Nên cắt từng khúc.
+const b64encodeBytes = (bytes) => {
   let bin = '';
-  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
   return btoa(bin);
 };
+
+const b64encode = (str) => b64encodeBytes(new TextEncoder().encode(str));
 
 const b64decode = (b64) => {
   const bin = atob(b64.replace(/\s/g, ''));
@@ -58,6 +63,47 @@ const viDate = (iso) => {
 /* ---- 3. Markdown -> HTML, kèm chú thích cuối trang -------------- */
 
 marked.setOptions({ gfm: true, breaks: false, headerIds: false, mangle: false });
+
+/* Ảnh đứng riêng một khối thì thành <figure> có dòng chú thích bên dưới; ảnh
+   nằm lẫn giữa câu thì vẫn chỉ là một thẻ <img>.
+
+   Quy ước: chữ trong ![...] vừa là lời tả cho máy đọc màn hình, vừa là dòng
+   chú thích — một chỗ để gõ chứ không phải hai. Khi nào cần tách hai thứ đó
+   ra thì viết ![lời tả](đường-dẫn "chú thích").
+
+   Chỗ gỡ thẻ <p> ra khỏi <figure> không phải để mã nguồn cho đẹp: <figure>
+   nằm trong <p> là HTML sai, trình duyệt sẽ tự cắt <p> làm đôi, thế là một
+   khối markdown hoá ra ba thẻ — mà bảng mốc cuộn ở mục 9 đếm theo khối. */
+marked.use({
+  renderer: {
+    image(href, title, text) {
+      let src;
+      try { src = encodeURI(href).replace(/%25/g, '%'); } catch (_) { return text; }
+      // Kích thước nằm sẵn trong tên file (xem mục 8), nhờ vậy trình duyệt
+      // chừa đúng chỗ từ đầu: ảnh tải xong trang không giật, và bảng mốc cuộn
+      // dựng trước lúc ảnh về vẫn còn đúng.
+      const co = src.match(/-(\d{1,5})x(\d{1,5})\.[a-z0-9]+$/i);
+      const kt = co ? ` width="${co[1]}" height="${co[2]}"` : '';
+      // text và title đều đã được marked thoát ký tự rồi, thoát nữa là hỏng.
+      return `<img src="${src}" alt="${text}"${title ? ` title="${title}"` : ''}`
+           + `${kt} loading="lazy" decoding="async">`;
+    },
+
+    paragraph(text) {
+      const t = text.trim();
+      if (/^<img\s[^>]*>$/.test(t)) {
+        const lay = (ten) => (t.match(new RegExp(` ${ten}="([^"]*)"`)) || ['', ''])[1];
+        const cthich = lay('title') || lay('alt');
+        if (!cthich) return t + '\n';
+        // Bỏ title đi: chú thích đã hiện thành chữ bên dưới rồi, để lại thì
+        // rê chuột vào ảnh lại bật thêm một cái nhãn nữa nói đúng câu đó.
+        return `<figure>${t.replace(/ title="[^"]*"/, '')}`
+             + `<figcaption>${cthich}</figcaption></figure>\n`;
+      }
+      return `<p>${t}</p>\n`;
+    },
+  },
+});
 
 /* Phần xử lý chú thích tách riêng vì chỗ đồng bộ cuộn cũng cần dùng: nó phải
    nhìn đúng cái văn bản mà marked nhìn thì số dòng mới khớp với ô soạn thảo.
@@ -158,6 +204,7 @@ function excerpt(md, len = 155) {
     .replace(/^[ \t]*\[\^[^\]]+\]:.*$/gm, '')
     .replace(/^#{1,6}\s+/gm, '').replace(/^>\s?/gm, '')
     .replace(/\[\^[^\]]+\]/g, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')      // ảnh: bỏ hẳn, kể cả lời tả
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[*_`#>-]/g, '')
     .replace(/\s+/g, ' ').trim();
@@ -285,9 +332,13 @@ async function commitFiles(message, files) {
 
   const tree = [];
   for (const f of files) {
+    // f.bytes cho file nhị phân (ảnh), f.content cho văn bản.
     const blob = await gh('/git/blobs', {
       method: 'POST',
-      body: { content: b64encode(f.content), encoding: 'base64' },
+      body: {
+        content: f.bytes ? b64encodeBytes(f.bytes) : b64encode(f.content),
+        encoding: 'base64',
+      },
     });
     tree.push({ path: f.path, mode: '100644', type: 'blob', sha: blob.sha });
   }
@@ -326,7 +377,167 @@ function writeEntries(indexHtml, entries) {
   return indexHtml.replace(MARKERS, (_m, a, _b, c) => `${a}\n${block}\n${c}`);
 }
 
-/* ---- 8. Giao diện ----------------------------------------------- */
+/* ---- 8. Ảnh trong bài -------------------------------------------
+   Một tấm ảnh đi qua ba chặng:
+
+     1. Ngay lúc dán, trong trình duyệt: co nhỏ lại rồi xuất WebP. Đi qua
+        canvas nên rụng luôn EXIF — rụng cả toạ độ GPS mà máy ảnh điện
+        thoại nhét vào mọi tấm hình. Blog công khai, không nên mang theo.
+     2. Nằm chờ trong IndexedDB, cạnh bản nháp. Đóng tab mở lại vẫn còn.
+     3. Bấm Đăng thì lên GitHub cùng với bài, trong đúng một commit — chứ
+        không phải bài lên rồi mà ảnh còn lửng lơ.
+
+   Tên file có dạng  anh/2026-08-31-a3f1c2d4-1600x1067.webp:
+   ngày tháng để xếp cho dễ nhìn; tám ký tự băm để hai ảnh khác nhau không
+   đè nhau, mà dán lại đúng tấm cũ thì trùng tên nên khỏi đẩy lần nữa; và
+   kích thước để lúc dựng trang biết chừa sẵn chỗ (xem hàm image ở mục 3).
+   ------------------------------------------------------------------- */
+
+const ANH_THUMUC = 'anh';
+const ANH_CANH   = 1600;    // cạnh dài nhất, tính bằng pixel
+const ANH_CHAT   = 0.82;    // chất lượng WebP
+// Nền lót cho ảnh trong suốt — đúng màu --l-bg trong style.css. Một bức vẽ nét
+// đen trên nền trong suốt mà để nguyên thì ở chế độ tối nó biến mất hẳn: nét
+// đen trên nền đen. Lót giấy vào là hai chế độ nhìn như nhau, và người dán
+// thấy sao thì người đọc thấy vậy. Ảnh chụp vốn đã kín nên không đổi gì.
+const ANH_NEN    = '#fbfaf7';
+// Qua canvas là GIF mất động, SVG mất nét. Hai thứ này đẩy nguyên xi.
+const ANH_GIU_NGUYEN = new Set(['image/gif', 'image/svg+xml']);
+
+// Đường dẫn trong repo (anh/x.webp) làm khoá; trong bài viết thì có thêm dấu
+// gạch chéo đứng đầu (/anh/x.webp) vì nó phải tính từ gốc site.
+const khoaAnh = (src) => String(src).replace(/^\/+/, '');
+
+// khoá -> { blob, url, daDang }.  url là địa chỉ blob: dùng cho khung xem trước.
+const anhCho = new Map();
+
+/* -- kho tạm trong máy -- */
+
+const DB_TEN = 'autos-write', DB_KHO = 'anh';
+let dbHua = null;
+
+function moKho() {
+  if (dbHua) return dbHua;
+  dbHua = new Promise((xong, hong) => {
+    const r = indexedDB.open(DB_TEN, 1);
+    r.onupgradeneeded = () => {
+      if (!r.result.objectStoreNames.contains(DB_KHO)) {
+        r.result.createObjectStore(DB_KHO, { keyPath: 'path' });
+      }
+    };
+    r.onsuccess = () => xong(r.result);
+    r.onerror = () => hong(r.error);
+    // Chế độ ẩn danh chặn IndexedDB. Chịu — ảnh vẫn chèn và đăng được như
+    // thường, chỉ là đóng tab thì mất, nên đừng để hỏng cả trình soạn.
+  }).catch(() => null);
+  return dbHua;
+}
+
+async function khoLam(quyen, viec) {
+  const db = await moKho();
+  if (!db) return null;
+  return new Promise((xong) => {
+    let kq = null;
+    const t = db.transaction(DB_KHO, quyen);
+    const yc = viec(t.objectStore(DB_KHO));
+    if (yc) yc.onsuccess = () => { kq = yc.result; };
+    t.oncomplete = () => xong(kq);
+    t.onerror = t.onabort = () => xong(null);
+  });
+}
+
+const khoGhi = (rec)  => khoLam('readwrite', (s) => s.put(rec));
+const khoXoa = (path) => khoLam('readwrite', (s) => s.delete(path));
+
+// Ảnh đã đăng thì bản trên GitHub mới là bản thật; giữ lại một tháng cho những
+// lần sửa bài liền sau đó, rồi dọn để kho khỏi phình ra mãi.
+const ANH_HAN = 30 * 24 * 60 * 60 * 1000;
+
+async function napKhoAnh() {
+  const ds = (await khoLam('readonly', (s) => s.getAll())) || [];
+  const gio = Date.now();
+  ds.forEach((r) => {
+    if (!r || !r.blob) return;
+    if (r.daDang && gio - (r.ts || 0) > ANH_HAN) { khoXoa(r.path); return; }
+    anhCho.set(r.path, {
+      blob: r.blob, url: URL.createObjectURL(r.blob), daDang: !!r.daDang,
+    });
+  });
+}
+
+/* -- đọc, co nhỏ, đặt tên -- */
+
+async function docAnh(file) {
+  if (window.createImageBitmap) {
+    // from-image: ảnh chụp dọc bằng điện thoại nằm ngang trong file, chỉ có
+    // một thẻ EXIF bảo xoay. Bỏ qua thẻ đó là ảnh đăng lên bị nằm nghiêng.
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (_) { /* trình duyệt cũ: quay về cách dưới */ }
+  }
+  return new Promise((xong, hong) => {
+    const url = URL.createObjectURL(file);
+    const im = new Image();
+    im.onload  = () => { URL.revokeObjectURL(url); xong(im); };
+    im.onerror = () => { URL.revokeObjectURL(url); hong(new Error('không đọc được ảnh')); };
+    im.src = url;
+  });
+}
+
+async function nenAnh(file) {
+  if (ANH_GIU_NGUYEN.has(file.type)) {
+    return {
+      blob: file, duoi: file.type === 'image/gif' ? 'gif' : 'svg', w: 0, h: 0,
+    };
+  }
+
+  const goc = await docAnh(file);
+  const w0 = goc.width, h0 = goc.height;
+  if (!w0 || !h0) throw new Error('ảnh rỗng');
+
+  const ti = Math.min(1, ANH_CANH / Math.max(w0, h0));   // chỉ thu, không phóng
+  const w = Math.max(1, Math.round(w0 * ti));
+  const h = Math.max(1, Math.round(h0 * ti));
+
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const g = cv.getContext('2d');
+  g.fillStyle = ANH_NEN;
+  g.fillRect(0, 0, w, h);
+  g.drawImage(goc, 0, 0, w, h);
+  if (goc.close) goc.close();
+
+  const blob = await new Promise((xong) => cv.toBlob(xong, 'image/webp', ANH_CHAT));
+  if (!blob) throw new Error('trình duyệt này không xuất được WebP');
+  return { blob, duoi: 'webp', w, h };
+}
+
+async function bamNgan(blob) {
+  const h = await crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+  return [...new Uint8Array(h).slice(0, 4)]
+    .map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Nhận một file, trả về đường dẫn để viết vào bài.
+async function nhanAnh(file) {
+  const a = await nenAnh(file);
+  const ma = await bamNgan(a.blob);
+  const co = a.w && a.h ? `-${a.w}x${a.h}` : '';
+  const path = `${ANH_THUMUC}/${todayISO()}-${ma}${co}.${a.duoi}`;
+
+  if (!anhCho.has(path)) {
+    anhCho.set(path, { blob: a.blob, url: URL.createObjectURL(a.blob), daDang: false });
+    khoGhi({ path, blob: a.blob, daDang: false, ts: Date.now() });
+  }
+  return '/' + path;
+}
+
+// Bắt cả ![](...) lẫn <img src="..."> viết tay, nên quét thẳng đường dẫn.
+function anhTrongBai(md) {
+  const thay = String(md).match(/\/anh\/[A-Za-z0-9._-]+/g) || [];
+  return [...new Set(thay.map(khoaAnh))];
+}
+
+/* ---- 9. Giao diện ----------------------------------------------- */
 
 const state = { editing: null, date: null, entries: [] };
 let armed = false;   // đã bấm "Đăng", đang chờ xác nhận
@@ -358,6 +569,8 @@ async function unlock() {
   } catch (e) {
     say(escapeHtml(e.message), 'err');
   }
+  // Trước khi dựng khung xem trước, vì bản nháp có thể đang trỏ vào ảnh chưa đăng.
+  try { await napKhoAnh(); } catch (_) { /* không có kho thì ảnh chỉ sống trong phiên này */ }
   restoreDraft();
   updateSlugInfo();
   renderPreview();
@@ -490,7 +703,87 @@ function addFootnote() {
   say(`Đã thêm chú thích ${n} — gõ nội dung ở dòng cuối cùng.`);
 }
 
+/* -- chèn ảnh -- */
+
+const CHU_THICH_MAU = 'Chú thích';
+let dangXuLyAnh = false;
+
+function chenAnh(duongDan) {
+  const v = ed.value;
+  const truoc = v.slice(0, ed.selectionStart).replace(/[ \t]+$/, '');
+  const sau   = v.slice(ed.selectionEnd).replace(/^[ \t]+/, '');
+  // Ảnh phải đứng riêng một khối thì mới thành <figure> có chú thích; dính vào
+  // đoạn văn thì nó chỉ là một thẻ <img> giữa câu. Nên chừa dòng trống hai đầu.
+  const dem  = truoc === '' || /\n\n$/.test(truoc) ? '' : (/\n$/.test(truoc) ? '\n' : '\n\n');
+  const duoi = sau   === '' || /^\n\n/.test(sau)   ? '' : (/^\n/.test(sau)   ? '\n' : '\n\n');
+  const than = duongDan.map((p) => `![${CHU_THICH_MAU}](${p})`).join('\n\n');
+
+  ed.value = truoc + dem + than + duoi + sau;
+
+  // Bôi đen sẵn chữ "Chú thích" của tấm đầu tiên: gõ tiếp là đè lên luôn,
+  // không phải rê chuột, không có hộp thoại nào chặn ngang mạch viết.
+  const dau = truoc.length + dem.length + 2;      // qua hai ký tự "!["
+  ed.focus();
+  ed.setSelectionRange(dau, dau + CHU_THICH_MAU.length);
+  onEdit();
+}
+
+async function themAnh(files) {
+  const ds = [...files].filter((f) => /^image\//.test(f.type));
+  if (!ds.length) { say('Chỗ đó chỉ nhận ảnh thôi.', 'err'); return; }
+  if (dangXuLyAnh) return;
+
+  dangXuLyAnh = true;
+  say(ds.length > 1 ? `Đang xử lý ${ds.length} ảnh…` : 'Đang xử lý ảnh…');
+
+  const duongDan = [], hong = [];
+  for (const f of ds) {
+    // Từng file một chứ không bỏ cả mẻ: một tấm .heic của iPhone mà trình
+    // duyệt không giải mã được thì cũng không nên kéo theo mấy tấm còn lại.
+    try { duongDan.push(await nhanAnh(f)); }
+    catch (e) { hong.push(`${f.name || 'ảnh'} (${e.message})`); }
+  }
+  dangXuLyAnh = false;
+
+  if (duongDan.length) chenAnh(duongDan);
+  if (hong.length) {
+    say(`Không chèn được: ${escapeHtml(hong.join(', '))}`, 'err');
+  } else {
+    say(`Đã chèn ${duongDan.length} ảnh — sẽ lên GitHub khi bấm Đăng.`);
+  }
+}
+
+ed.addEventListener('paste', (e) => {
+  const files = e.clipboardData ? [...e.clipboardData.files] : [];
+  if (!files.some((f) => /^image\//.test(f.type))) return;   // dán chữ: để yên
+  e.preventDefault();
+  themAnh(files);
+});
+
+// Thả file lên <textarea> mà không chặn thì trình duyệt bỏ trang này để mở
+// file đó — mất sạch những gì đang gõ. Nên chặn mọi cú thả file, kể cả file
+// không phải ảnh; themAnh sẽ nói lại là không nhận.
+['dragenter', 'dragover'].forEach((ten) => ed.addEventListener(ten, (e) => {
+  if (!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return;
+  e.preventDefault();
+  ed.classList.add('tha-anh');
+}));
+['dragleave', 'dragend', 'drop'].forEach((ten) =>
+  ed.addEventListener(ten, () => ed.classList.remove('tha-anh')));
+
+ed.addEventListener('drop', (e) => {
+  if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+  e.preventDefault();
+  themAnh(e.dataTransfer.files);
+});
+
+$('anh-input').addEventListener('change', (e) => {
+  themAnh(e.target.files);
+  e.target.value = '';    // chọn lại đúng file vừa rồi vẫn phải nổ sự kiện
+});
+
 const COMMANDS = {
+  image:    () => $('anh-input').click(),
   bold:     () => surround('**', '**'),
   italic:   () => surround('*', '*'),
   h2:       () => prefixLines('## '),
@@ -529,6 +822,31 @@ let previewTimer, draftTimer;
 const previewDoc = () => { try { return $('preview').contentDocument; } catch (_) { return null; } };
 const previewWin = () => { try { return $('preview').contentWindow; } catch (_) { return null; } };
 
+/* Ảnh vừa dán thì /anh/... còn 404 vì chưa lên GitHub — trong khung xem trước
+   trỏ tạm vào bản nằm trong máy. Ảnh của bài đã đăng thì không có trong anhCho
+   nữa, mà cũng chẳng cần: trình soạn cùng tên miền với trang thật nên đường
+   dẫn tính từ gốc tải thẳng được.
+
+   Đổi ngay trên chuỗi HTML, trước khi nó vào tài liệu — chứ đợi vào rồi mới
+   sửa src thì trình duyệt đã kịp bắn một yêu cầu 404, mà lúc đang gõ thì cứ
+   300ms một lần như thế. */
+function anhSangBlob(html) {
+  return html.replace(/(<img\b[^>]*?\bsrc=")(\/anh\/[^"]+)"/g, (ca, dau, p) => {
+    const a = anhCho.get(khoaAnh(p));
+    return a ? dau + a.url + '"' : ca;
+  });
+}
+
+// Ảnh viết tay không mang kích thước trong tên file, nên đến lúc tải xong bố
+// cục mới đổi — bảng mốc cuộn dựng trước đó sai, bắt dựng lại.
+function theoDoiAnh() {
+  const doc = previewDoc();
+  if (!doc) return;
+  doc.querySelectorAll('article.post img').forEach((im) => {
+    if (!im.complete) im.addEventListener('load', () => { bangMoc = null; }, { once: true });
+  });
+}
+
 /* Nạp lại cả trang xem trước thì nó tụt về đầu, mà đang gõ giữa bài thì cứ
    300ms lại bị ném lên đầu một lần. Nên chỉ nạp cả trang đúng lần đầu; những
    lần sau thay mỗi ruột của <article class="post">. Phần đầu trang, chân
@@ -554,13 +872,14 @@ function renderPreview() {
     const moi = new DOMParser().parseFromString(html, 'text/html')
       .querySelector('article.post');
     if (moi) {
-      cu.innerHTML = moi.innerHTML;
+      cu.innerHTML = anhSangBlob(moi.innerHTML);
+      theoDoiAnh();
       danhDauDong();
       cuonTheoOSoan();      // phần nằm trên chỗ đang đọc có thể dài ngắn khác đi
       return;
     }
   }
-  $('preview').srcdoc = html;   // lần đầu, hoặc khung hỏng thì dựng lại từ đầu
+  $('preview').srcdoc = anhSangBlob(html);   // lần đầu, hoặc khung hỏng thì dựng lại
 }
 
 /* ---- Cuộn theo nhau -----------------------------------------------
@@ -705,6 +1024,7 @@ $('preview').addEventListener('load', () => {
   st.textContent = 'html{scroll-behavior:auto!important}';
   doc.head.appendChild(st);
   win.addEventListener('scroll', cuonTheoXemTruoc, { passive: true });
+  theoDoiAnh();
   danhDauDong();
   cuonTheoOSoan();
 });
@@ -839,11 +1159,31 @@ $('publish-confirm').addEventListener('click', async () => {
     else entries.push({ slug, title, date });
     indexHtml = writeEntries(indexHtml, entries);
 
-    await commitFiles(`${state.editing ? 'Cập nhật' : 'Bài mới'}: ${title}`, [
+    const files = [
       { path: `posts/${slug}/index.md`,   content: buildMd({ title, date, updated, body }) },
       { path: `posts/${slug}/index.html`, content: buildPostHtml({ title, date, updated, bodyMd: body }) },
       { path: 'index.html',               content: indexHtml },
-    ]);
+    ];
+
+    // Ảnh nào còn nằm trong kho máy này và chưa đăng thì gửi kèm. Ảnh không có
+    // trong kho thì hoặc đã đăng rồi, hoặc do máy khác đăng — đằng nào cũng đã
+    // nằm sẵn trên repo, đẩy lại chỉ tốn công.
+    const anhMoi = anhTrongBai(body)
+      .map((p) => [p, anhCho.get(p)])
+      .filter(([, a]) => a && !a.daDang);
+    for (const [p, a] of anhMoi) {
+      files.push({ path: p, bytes: new Uint8Array(await a.blob.arrayBuffer()) });
+    }
+    if (anhMoi.length) say(`Đang đăng… (kèm ${anhMoi.length} ảnh)`);
+
+    await commitFiles(`${state.editing ? 'Cập nhật' : 'Bài mới'}: ${title}`, files);
+
+    // Từ đây bản trên GitHub mới là bản thật. Vẫn giữ blob lại một thời gian
+    // (xem ANH_HAN) để khung xem trước còn hiện ngay được khi mở bài ra sửa.
+    anhMoi.forEach(([p, a]) => {
+      a.daDang = true;
+      khoGhi({ path: p, blob: a.blob, daDang: true, ts: Date.now() });
+    });
 
     localStorage.removeItem(draftKey());
     state.editing = slug;

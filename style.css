@@ -218,6 +218,19 @@ a:hover { text-decoration-style: dotted; }
 
 .post img { max-width: 100%; height: auto; display: block; margin: 2rem auto; }
 
+/* Ảnh đứng riêng một khối thì trình soạn bọc nó trong <figure> và lấy chữ
+   trong ![...] làm dòng chú thích bên dưới. */
+.post figure { margin: 2.6rem 0; }
+.post figure img { margin: 0 auto; }
+.post figcaption {
+  margin-top: .75rem;
+  text-align: center;
+  font-size: .85rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 .post code {
   background: var(--accent);
   padding: .1em .35em;
