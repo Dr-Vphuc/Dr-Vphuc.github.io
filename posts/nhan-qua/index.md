@@ -25,16 +25,11 @@ Có 2 phe phái tham gia sự việc, thì cả 2 bên đều phải chịu qu�
 
 Bạn nói tên đó là kẻ xấu xa, còn tôi thấy hắn là một gã mạnh mẽ. Không dám chắc, nhưng có lẽ hắn đã hướng chuỗi nhân quả của mình đến một quả tốt đẹp. Còn nếu vẫn còn cay cú, hận đời, hận hắn, hận bản thân mình, thì tôi e rằng bạn đã hướng chuỗi nhân quả của mình cắm thẳng xuống đất. 😓 
 
-Đề phòng trường hợp bạn thắc mắc: "Thế làm thế nào để hướng lên?". Trước tiên phải nói thật, tôi không biết :) Tôi không biết bạn là người như nào, hoàn cảnh, năng lực của bạn ra sao, bạn phải tự là người đi tìm câu hỏi cho riêng mình. Tìm cách vượt qua, hay sử dụng nó như bản đạp phát triển bản thân, whatever..., tôi không biết, bạn tự quyết nhé.
+Đề phòng trường hợp bạn thắc mắc: "Thế làm thế nào để hướng lên?". Trước tiên phải nói thật, tôi không biết :) Tôi không biết bạn là người như nào, hoàn cảnh, năng lực của bạn ra sao, bạn phải tự là người đi tìm câu trả lời cho riêng mình. Tìm cách vượt qua, hay sử dụng nó như bản đạp phát triển bản thân, whatever..., tôi không biết, bạn tự quyết nhé.
 
 Tôi biết những nạn nhân của bạo lực, bắt nạt nói riêng hay của tất cả vấn đề nói chung đều mong muốn bản thân tốt lên, nhưng lại còn muốn kẻ ác phải chịu sự trừng phạt, thì bạn hơi tham lam.
 
 Bạn cũng có thể giúp tôi trả lời câu hỏi "Tại sao bản thân sống lương thiện mà mãi chưa được đền đáp xứng đáng?" theo lối tư duy về Nhân quả mới. Tôi tin bạn sẽ có cái nhìn thực tế hơn về cuộc sống, và khả năng cũng tìm luôn ra cách để được 'đền đáp xứng đáng'. 😚
 
-## Phê phán
-
-Hôm qua xem tiktok thấy....
-
-Những người tu hành xuất gia, ẩn sĩ họ nghĩ họ đeo cái vòng vàng (thoát khỏi nhân quả, luân hồi), tôi lại tưởng họ đang đeo cái xích chó (thoát làm sao được, thoát khỏi duyên nợ thì được)
 
 [^1]: Bộ Giáo dục và Đào tạo. (2021). Giáo trình Triết học Mác – Lênin (Dành cho sinh viên đại học khối không chuyên ngành Mác–Lênin). Hà Nội: Nhà xuất bản Chính trị Quốc gia Sự thật.
