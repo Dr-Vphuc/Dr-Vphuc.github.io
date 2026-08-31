@@ -25,7 +25,7 @@ date: 2026-08-31
 - Hướng quỹ đạo nhân quả lên trên
 
 7. Chênh vênh vô định trong hiện tại?
-- Đương nhiên
+- Hehe, vậy tất cả chúng ta đều giống nhau rồi
 
 8. Lỡ tương lai không thành công?
 - Bạn có tương lai
