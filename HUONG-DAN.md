@@ -90,6 +90,8 @@ Bài đang viết tự lưu vào máy sau mỗi lần ngừng gõ. Đóng nhầm
 `/write/` là còn nguyên. Ctrl+S lưu ngay lập tức.
 
 Đăng xong, GitHub Pages dựng lại mất khoảng **30–60 giây**.
+Bài mới nằm trên GitHub, chưa có trong thư mục trên máy — xem mục
+[Trước khi sửa trên máy](#trước-khi-sửa-trên-máy-kéo-bài-mới-về).
 
 ### Sửa bài đã đăng
 
@@ -261,6 +263,88 @@ trong `write/app.js`).
 
 Trang `/write/` có bảng màu riêng và vẫn theo hệ điều hành — nó là công cụ
 của bạn, không phải mặt tiền của site.
+
+## Trước khi sửa trên máy: kéo bài mới về
+
+Trang `/write/` đăng bài bằng cách gọi thẳng GitHub API. Bài đi từ trình duyệt
+lên GitHub, **không đi qua thư mục trên máy này**. Nên mỗi lần bạn đăng một
+bài là GitHub có thêm một commit mà máy bạn không có.
+
+Thói quen cần có: **mở thư mục ra là kéo về trước, rồi mới sửa.**
+
+```bash
+cd blog
+git pull
+```
+
+Muốn xem trước có gì mới rồi hẵng kéo:
+
+```bash
+git fetch
+git status                      # "behind 'origin/main' by N commits"
+git log --oneline main..origin/main
+```
+
+### Quên kéo thì gặp gì
+
+Lúc push sẽ ăn nguyên câu này:
+
+```
+! [rejected]        main -> main (fetch first)
+error: failed to push some refs
+```
+
+Không hỏng gì cả. Git chỉ từ chối ghi đè lên phần nó biết là bạn chưa thấy.
+Chữa:
+
+```bash
+git pull --rebase     # xếp commit của bạn lên trên mấy bài vừa tải về
+git push
+```
+
+`--rebase` để lịch sử thành một mạch thẳng, không sinh ra commit "Merge
+branch..." mỗi lần đăng bài. Bỏ nó đi cũng chạy, chỉ là lịch sử rối hơn.
+
+### Đang sửa dở, chưa commit
+
+`git pull` sẽ không chịu chạy vì sợ đè mất phần bạn đang làm. Cất tạm đi rồi
+lấy lại:
+
+```bash
+git stash
+git pull
+git stash pop
+```
+
+### Nếu nó báo xung đột
+
+Hiếm, vì hai bên thường động vào hai chỗ khác nhau. Chỉ có hai file có thể
+đụng nhau thật:
+
+**`index.html`** — `/write/` chèn thêm dòng `<li>` của bài mới, còn bạn thì có
+thể vừa sửa giao diện trang chủ. Mở file ra, xoá mấy dòng `<<<<<<<` `=======`
+`>>>>>>>`, **giữ cả hai phần**: dòng `<li>` của bài mới, và phần bạn sửa. Hai
+mốc `<!--POSTS_START-->` / `<!--POSTS_END-->` phải còn nguyên, trang `/write/`
+đọc danh sách bài theo hai mốc đó.
+
+**`posts/<slug>/index.html`** — chỉ xảy ra khi bạn sửa tay đúng cái bài mà
+`/write/` cũng vừa đăng lại. Bản của `/write/` là bản mới hơn, lấy nó.
+
+Sửa xong, báo cho Git biết là đã xong:
+
+```bash
+git add <file vừa sửa>
+git rebase --continue      # nếu nãy chạy git pull --rebase
+git commit                 # nếu nãy chạy git pull không kèm --rebase
+```
+
+Muốn bỏ hết, lùi về như chưa làm gì: `git rebase --abort` (hoặc
+`git merge --abort` nếu không dùng `--rebase`).
+
+> Đừng dùng `--ours` / `--theirs` cho nhanh nếu chưa chắc. Trong lúc *rebase*
+> hai chữ đó **đảo ngược** so với lúc *merge*: `--ours` lại là bản tải từ
+> GitHub về, `--theirs` mới là commit của bạn. Mở file ra sửa tay bao giờ
+> cũng đúng.
 
 ## Xem thử trên máy trước khi push
 
