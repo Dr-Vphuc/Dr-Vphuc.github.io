@@ -59,7 +59,12 @@ const viDate = (iso) => {
 
 marked.setOptions({ gfm: true, breaks: false, headerIds: false, mangle: false });
 
-function renderMarkdown(md) {
+/* Phần xử lý chú thích tách riêng vì chỗ đồng bộ cuộn cũng cần dùng: nó phải
+   nhìn đúng cái văn bản mà marked nhìn thì số dòng mới khớp với ô soạn thảo.
+   Hai phép thay thế dưới đây đều không thêm bớt dòng nào — dòng khai báo bị
+   làm rỗng chứ không bị xoá, còn dấu hiệu trong câu chỉ đổi chữ tại chỗ. Giữ
+   nguyên tính chất đó, hỏng nó là cuộn lệch. */
+function tachChuThich(md) {
   const defs = new Map();
 
   // Gom các dòng khai báo:  [^1]: nội dung chú thích
@@ -78,6 +83,12 @@ function renderMarkdown(md) {
     return `<sup class="fnref" id="fnref-${sid}"><a href="#fn-${sid}">${n + 1}</a></sup>`;
   });
 
+  return { text, defs, order };
+}
+
+function renderMarkdown(md) {
+  const { text, defs, order } = tachChuThich(md);
+
   let html = marked.parse(text).trim();
 
   if (order.length) {
@@ -89,6 +100,44 @@ function renderMarkdown(md) {
     html += `\n<section class="footnotes">\n<ol>\n${items}\n</ol>\n</section>`;
   }
   return html;
+}
+
+/* Mỗi khối markdown ở cấp cao nhất bắt đầu ở dòng nào (đếm từ 0). Đây là cái
+   bắc cầu giữa hai bên khi cuộn: biết khối thứ i bắt đầu ở dòng nào thì biết
+   chỗ nào trong ô soạn ứng với chỗ nào trong bài đã dựng.
+
+   Trả null khi không chắc — bên gọi sẽ lùi về cuộn chia theo tỉ lệ. Thà cuộn
+   thô còn hơn cuộn sai chỗ, mà sai chỗ thì khó chịu hơn nhiều. */
+function viTriDongCuaKhoi(md) {
+  const demDong = (s) => (String(s).match(/\n/g) || []).length;
+  const text = tachChuThich(md).text;
+
+  let tokens;
+  try { tokens = marked.lexer(text); } catch (_) { return null; }
+
+  // Chốt an toàn: ghép độ dài các token lại phải đúng bằng văn bản. Có thứ
+  // marked nuốt mất raw (dòng khai báo link kiểu [tên]: url chẳng hạn) — gặp
+  // vậy thì mọi số dòng phía sau lệch hết, thà bỏ.
+  let tong = 0;
+  tokens.forEach((t) => { tong += demDong(t.raw); });
+  if (tong !== demDong(text)) return null;
+
+  const dong = [];
+  let d = 0;
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (t.type === 'space') { d += demDong(t.raw); continue; }
+    dong.push(d);
+    d += demDong(t.raw);
+    // marked gộp các token 'text' nằm liền nhau thành một thẻ <p>, nên ở đây
+    // cũng phải gộp — không thì số mốc nhiều hơn số thẻ và cả bản đồ hỏng.
+    if (t.type === 'text') {
+      while (i + 1 < tokens.length && tokens[i + 1].type === 'text') {
+        d += demDong(tokens[++i].raw);
+      }
+    }
+  }
+  return dong;
 }
 
 // Dấu hiệu chú thích chưa có dòng khai báo tương ứng — nếu bỏ sót, bài đăng ra
@@ -477,18 +526,188 @@ ed.addEventListener('keydown', (e) => {
 
 let previewTimer, draftTimer;
 
+const previewDoc = () => { try { return $('preview').contentDocument; } catch (_) { return null; } };
+const previewWin = () => { try { return $('preview').contentWindow; } catch (_) { return null; } };
+
+/* Nạp lại cả trang xem trước thì nó tụt về đầu, mà đang gõ giữa bài thì cứ
+   300ms lại bị ném lên đầu một lần. Nên chỉ nạp cả trang đúng lần đầu; những
+   lần sau thay mỗi ruột của <article class="post">. Phần đầu trang, chân
+   trang và nút sáng/tối không đổi khi đang gõ — giữ nguyên chúng thì chỗ đang
+   cuộn còn nguyên, và nút vẫn còn cái người nghe sự kiện mà theme.js gắn cho
+   nó lúc nạp (thay cả <body> là mất, vì script không chạy lại). */
 function renderPreview() {
   const title = $('title').value.trim() || 'Chưa có tiêu đề';
   const date = state.date || todayISO();
+  let html;
   try {
-    $('preview').srcdoc = buildPostHtml({
+    html = buildPostHtml({
       title, date, updated: state.editing ? todayISO() : null, bodyMd: ed.value,
     });
   } catch (e) {
     $('preview').srcdoc =
       `<pre style="padding:1rem;color:#a33">${escapeHtml(e.message)}</pre>`;
+    return;
+  }
+
+  const cu = previewDoc() && previewDoc().querySelector('article.post');
+  if (cu) {
+    const moi = new DOMParser().parseFromString(html, 'text/html')
+      .querySelector('article.post');
+    if (moi) {
+      cu.innerHTML = moi.innerHTML;
+      danhDauDong();
+      cuonTheoOSoan();      // phần nằm trên chỗ đang đọc có thể dài ngắn khác đi
+      return;
+    }
+  }
+  $('preview').srcdoc = html;   // lần đầu, hoặc khung hỏng thì dựng lại từ đầu
+}
+
+/* ---- Cuộn theo nhau -----------------------------------------------
+   Cách làm: dựng một bảng gồm những cặp (chỗ cuộn bên soạn, chỗ cuộn bên xem
+   trước) tại mỗi khối của bài, rồi nội suy tuyến tính giữa các cặp đó. Chia
+   theo tỉ lệ đơn thuần sẽ lệch ngay khi bài có khối mã hay ảnh — chúng chiếm
+   vài dòng văn bản nhưng cả gang tay trên trang.
+   -------------------------------------------------------------------- */
+
+/* Bản sao vô hình của ô soạn thảo. Cần nó vì <textarea> không cho hỏi dòng
+   thứ n nằm ở đâu, mà chữ lại tự xuống dòng nên một dòng trong văn bản có
+   thể chiếm hai ba dòng trên màn hình. Chép y nguyên font, bề rộng, lề của ô
+   soạn rồi đo offsetTop từng dòng. */
+const guong = document.createElement('div');
+guong.id = 'editor-mirror';
+guong.setAttribute('aria-hidden', 'true');
+document.body.appendChild(guong);
+
+const NET_CHU = [
+  'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'lineHeight',
+  'letterSpacing', 'wordSpacing', 'textIndent', 'textTransform', 'tabSize',
+  'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+];
+
+function doDinhDong() {
+  const cs = getComputedStyle(ed);
+  NET_CHU.forEach((k) => { guong.style[k] = cs[k]; });
+  // clientWidth chứ không phải offsetWidth: nó đã trừ thanh cuộn ra rồi, mà
+  // thanh cuộn hẹp đi vài chục pixel là chữ xuống dòng ở chỗ khác.
+  guong.style.width = ed.clientWidth + 'px';
+
+  const frag = document.createDocumentFragment();
+  const o = ed.value.split('\n').map((d) => {
+    const s = document.createElement('span');
+    s.style.display = 'block';
+    s.textContent = d === '' ? '\u200b' : d;   // dòng trống vẫn phải cao một dòng
+    frag.appendChild(s);
+    return s;
+  });
+  guong.textContent = '';
+  guong.appendChild(frag);
+  return o.map((s) => s.offsetTop);
+}
+
+// Bảng mốc dùng chung cho cả hai chiều cuộn; đặt null là bắt dựng lại.
+let bangMoc = null, lucCuoi = 0;
+
+/* Gắn số dòng nguồn vào từng khối trong bài đã dựng, làm mốc cho việc cuộn.
+   Không khớp được thì không gắn gì, và việc cuộn tự lùi về chia theo tỉ lệ. */
+function danhDauDong() {
+  bangMoc = null;
+  const art = previewDoc() && previewDoc().querySelector('article.post');
+  if (!art) return;
+
+  // Hai thẻ đầu là tiêu đề bài và dòng ngày tháng, do khuôn trang sinh ra chứ
+  // không ứng với dòng nào trong ô soạn. Khối chú thích ở cuối cũng vậy.
+  const khoi = [...art.children].slice(2);
+  if (khoi.length && khoi[khoi.length - 1].classList.contains('footnotes')) khoi.pop();
+
+  const dong = viTriDongCuaKhoi(ed.value);
+  if (!dong || dong.length !== khoi.length) return;
+  khoi.forEach((el, i) => { el.dataset.ln = dong[i]; });
+}
+
+function dungBang() {
+  const doc = previewDoc(), win = previewWin();
+  const soanMax = Math.max(0, ed.scrollHeight - ed.clientHeight);
+  const xemMax = doc && win
+    ? Math.max(0, doc.documentElement.scrollHeight - win.innerHeight) : 0;
+
+  const b = [[0, 0]];                       // đầu khớp đầu
+  if (doc && win) {
+    const dinh = doDinhDong();
+    doc.querySelectorAll('article.post [data-ln]').forEach((el) => {
+      const x = Math.min(dinh[Number(el.dataset.ln)] || 0, soanMax);
+      const y = Math.min(el.getBoundingClientRect().top + win.scrollY, xemMax);
+      const cuoi = b[b.length - 1];
+      // Bảng phải tăng dần ở cả hai cột, không thì nội suy chạy giật lùi.
+      if (x > cuoi[0] && y >= cuoi[1]) b.push([x, y]);
+    });
+  }
+  if (soanMax > b[b.length - 1][0]) b.push([soanMax, xemMax]);   // đáy khớp đáy
+  return b;
+}
+
+// Dựng lại bảng ở đầu mỗi lượt cuộn, rồi dùng lại cho đến khi tay rời chuột.
+// Trong một lượt cuộn bố cục không đổi, mà đo lại mỗi sự kiện thì giật.
+function layBang() {
+  const gio = Date.now();
+  if (!bangMoc || gio - lucCuoi > 200) bangMoc = dungBang();
+  lucCuoi = gio;
+  return bangMoc;
+}
+
+function noiSuy(b, x, cot) {        // cot 0: đưa vào chỗ cuộn bên soạn; 1: bên xem
+  const k = cot, r = 1 - cot;
+  if (x <= b[0][k]) return b[0][r];
+  for (let i = 1; i < b.length; i++) {
+    if (x <= b[i][k]) {
+      const a = b[i - 1], c = b[i], d = c[k] - a[k];
+      return d <= 0 ? c[r] : a[r] + (x - a[k]) * (c[r] - a[r]) / d;
+    }
+  }
+  return b[b.length - 1][r];
+}
+
+// Cuộn bên này làm bên kia cuộn theo, mà bên kia cuộn lại bắn ra sự kiện cuộn
+// nữa — không chặn thì hai bên đá qua đá lại. Mở khoá sau hai khung hình, lúc
+// đó sự kiện do mình gây ra đã bay hết.
+let khoaCuon = false;
+function khoa(fn) {
+  if (khoaCuon) return;
+  khoaCuon = true;
+  const mo = () => { khoaCuon = false; };
+  try { fn(); } finally {
+    requestAnimationFrame(() => requestAnimationFrame(mo));
+    setTimeout(mo, 150);   // phòng thân: tab chạy nền thì rAF bị treo, khoá sẽ kẹt
   }
 }
+
+function cuonTheoOSoan() {
+  const win = previewWin();
+  if (!win) return;
+  khoa(() => win.scrollTo(0, noiSuy(layBang(), ed.scrollTop, 0)));
+}
+
+function cuonTheoXemTruoc() {
+  const win = previewWin();
+  if (!win) return;
+  khoa(() => { ed.scrollTop = noiSuy(layBang(), win.scrollY, 1); });
+}
+
+ed.addEventListener('scroll', cuonTheoOSoan, { passive: true });
+window.addEventListener('resize', () => { bangMoc = null; });
+
+$('preview').addEventListener('load', () => {
+  const doc = previewDoc(), win = previewWin();
+  if (!doc || !win) return;
+  // style.css bật cuộn mượt cho cả site. Trong khung xem trước thì nó biến mỗi
+  // lần cuộn theo thành một đoạn chạy có quán tính, đuổi không kịp và giật.
+  const st = doc.createElement('style');
+  st.textContent = 'html{scroll-behavior:auto!important}';
+  doc.head.appendChild(st);
+  win.addEventListener('scroll', cuonTheoXemTruoc, { passive: true });
+  danhDauDong();
+  cuonTheoOSoan();
+});
 
 const draftKey = () => 'draft:' + (state.editing || '__new__');
 

@@ -83,6 +83,8 @@ Vào `/write/`:
 | Đăng | Bấm **Đăng** → xem lại → **Xác nhận đăng** |
 
 Khung bên phải là bài thật, đúng font và giao diện người đọc sẽ thấy.
+Hai bên cuộn theo nhau: cuộn bên nào thì bên kia đi theo đúng đoạn đang đọc,
+và gõ thêm chữ ở giữa bài cũng không làm khung bên phải nhảy đi đâu.
 
 Bài đang viết tự lưu vào máy sau mỗi lần ngừng gõ. Đóng nhầm tab thì mở lại
 `/write/` là còn nguyên. Ctrl+S lưu ngay lập tức.

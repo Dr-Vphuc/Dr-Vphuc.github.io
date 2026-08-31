@@ -83,6 +83,17 @@
     font-size: 14.5px; line-height: 1.75; color: var(--ui-fg);
   }
   #preview { flex: 1 1 50%; min-width: 0; border: 0; border-left: 1px solid var(--ui-rule); background: #fff; }
+
+  /* Bản sao vô hình của ô soạn, chỉ để đo xem dòng thứ n nằm ở đâu — xem
+     phần "Cuộn theo nhau" trong app.js. Đẩy ra ngoài màn chứ không display:none,
+     vì ẩn hẳn thì trình duyệt không tính bố cục và không đo được gì.
+     Mấy thuộc tính còn lại (font, lề, bề rộng) do JS chép sang từ #editor. */
+  #editor-mirror {
+    position: absolute; top: 0; left: -99999px;
+    visibility: hidden; pointer-events: none;
+    border: 0; box-sizing: border-box;
+    white-space: pre-wrap; overflow-wrap: break-word;
+  }
   @media (prefers-color-scheme: dark) { #preview { background: #141312; } }
   @media (max-width: 52rem) {
     main.split { flex-direction: column; }
