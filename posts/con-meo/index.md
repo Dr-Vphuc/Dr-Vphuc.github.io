@@ -24,3 +24,18 @@ Bạn thỏa mãn khi được vuốt ve mèo, bạn cảm thấy được chia 
 ![Thang đo tần số năng lượng của Ph.D David Hawkins.](/anh/2026-08-31-153fed4c-680x534.webp) 
 
 Dựa trên thang đo tần số năng lượng do Tiến sĩ Tâm thần học David Hawkins, các nghiên cứu chỉ ra rằng tần số trung bình ở loài mèo là 240 điểm, cao hơn 85% dân số. Rõ ràng là không ngoa khi nói loài mèo còn gần với trạng thái giác ngộ hơn cả con người chúng ta. Sự thật là ta cũng thua cả chó :), khi mức trung bình của chúng là 245, trong khi chúng ta chỉ dưới 200 điểm. (Ngoài ra thì khi trong trạng thái phát ra tiếng 'grrr' đặc trưng ở loài mèo hay vẫy đuôi ở loài chó, chúng có thể có tần số lên đến gần 500 điểm.)
+
+
+![Puma](/anh/2026-09-01-cad7a0ac-1200x1600.webp)
+
+![Người ngắm trăng soi ngoài cửa sổ/ Trăng nhòm khe cửa ngắm meo meo](/anh/2026-09-01-06567ee1-1600x1200.webp)
+
+![Ngủ trưa 1](/anh/2026-09-01-01520432-1200x1600.webp)
+
+![Tưởng bị bóng đè](/anh/2026-09-01-4d2658e8-1200x1600.webp)
+
+![Sigma vl](/anh/2026-09-01-171f5f07-1600x1200.webp)
+
+![Huh?](/anh/2026-09-01-66ab0f0c-1600x1202.webp)
+
+![Ngủ trưa 2](/anh/2026-09-01-3f1dbb47-1200x1600.webp)
