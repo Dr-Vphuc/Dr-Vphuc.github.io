@@ -31,7 +31,7 @@ date: 2026-08-31
 - Bạn có tương lai
 
 9. Có những thứ cả đời theo đuổi cũng không thể có được?
-- Nếu đã theo đuổi thì bạn đã có được nó rồi, chẳng qua là quy mô nhỏ hơn.
+- Bạn đã có được nó rồi, chẳng qua là quy mô nhỏ hơn.
 
 10. Tại sao bạn được sinh ra?
 - Tại vì bạn là con tinh trùng đầu tiên vào được trứng.
