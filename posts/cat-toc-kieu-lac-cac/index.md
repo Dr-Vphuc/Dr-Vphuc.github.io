@@ -21,7 +21,7 @@ Lúc này thì người thân càng nói nhiều, đương nhiên rồi, chính 
 
 3.
 
-Về sau, nó dài hơn, đây là thời kì lại làm tôi lưu luyến nhất mái tóc của mình. Lúc đó, tôi vuốt ngược nó ra sau, kiểu slick-back nhưng tóc mai với tóc đỉnh đầu dài bằng nhau, trông rất phong trần và có gu. Nó cũng chưa quá dài đề tôi phải lo việc rụng hay những con gió bên ngoài phá hỏng kiểu tóc. 
+Về sau, nó dài hơn, đây là thời kì lại làm tôi lưu luyến nhất mái tóc của mình. Lúc đó, tôi vuốt ngược nó ra sau, kiểu slick-back nhưng tóc mai với tóc đỉnh đầu dài bằng nhau, trông rất phong trần và có gu. Nó cũng chưa quá dài để tôi phải lo việc rụng hay những con gió bên ngoài phá hỏng kiểu tóc. 
 
 Đó cũng là thời kì thoải mái nhất của tôi, năm 2 đại học, chẳng có gì lo nghĩ, chỉ biết học thôi. Khi nào dài quá tai, tôi lại tự cắt tóc mai (cùng tóc gáy một lượt luôn). Lúc này thì người thân đã bị dìm xuống đáy hi vọng thấy chút tiến triển từ mái tóc tôi, dù nó vẫn khá lạ mắt nhưng cũng đã hài lòng hơn. 
 
