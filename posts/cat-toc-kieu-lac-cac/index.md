@@ -29,7 +29,7 @@ Về sau, nó dài hơn, đây là thời kì lại làm tôi lưu luyến nhấ
 
 Cho đến khi mà phần tóc trên đầu đã quá dài, chất tóc khá cứng không thể mãi vuốt ra sau được nữa, tôi quyết định quay trở lại làm chính mình ngày xưa, side-part 7:3. Nhưng lần này không còn là kiểu tiêu chuẩn mà có những layer không đồng đều do không phải thợ chuyên (mà tôi khá chắc thợ chuyên cũng không tự cắt cho mình được đẹp như tôi 😆), phần tóc mai và gáy tôi cũng để rậm hơn trước. 
 
-Vẫn là tôi, vẫn là kiểu tóc của 2 năm trước, nhưng tóc không còn là tóc của 2 năm trước, tôi cũng không còn là tôi của trước đây. Người thân không còn nói về tóc của tôi vì trông nó đã 'bình thường' rồi. 
+Giờ đây, vấn đề về rụng tóc và gió lại quay lại tìm tôi. Dù sao thì tôi vẫn là tôi, vẫn là kiểu tóc của 2 năm trước, nhưng tóc không còn là tóc của 2 năm trước, tôi cũng không còn là tôi của trước đây. Người thân không còn nói về tóc của tôi vì trông nó đã 'bình thường' rồi. 
 
 
 
@@ -45,4 +45,4 @@ Bạn nhìn xem, tóc tai, quần áo hay là sự nghiệp, con đường học
 
 ![Yeah](/anh/2026-09-01-e867090e-1020x1020.webp)
 
-![Khuyên fake :))](/anh/2026-09-01-e1912291-1020x1020.webp)
+![Gió đang phá tóc tôi :)](/anh/2026-09-01-e1912291-1020x1020.webp)
