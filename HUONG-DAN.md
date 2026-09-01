@@ -156,6 +156,12 @@ bài sẽ hiện thêm "cập nhật ngày …".
 Muốn đổi hẳn đường dẫn thì phải làm tay: đổi tên thư mục trong `posts/` và
 sửa dòng tương ứng trong `index.html`.
 
+### Thứ tự bài trên trang chủ
+
+Xếp theo ngày **tăng dần**: bài cũ nhất trên cùng, bài mới nhất dưới cùng.
+Mỗi lần đăng, `/write/` xếp lại cả danh sách, nên không cần chèn tay đúng chỗ.
+Hai bài cùng ngày thì bài đăng sau nằm dưới.
+
 ### Xoá bài
 
 Chưa có nút xoá. Làm tay: xoá thư mục `posts/<slug>/` và xoá dòng `<li>`

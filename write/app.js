@@ -370,7 +370,10 @@ function parseEntries(indexHtml) {
 }
 
 function writeEntries(indexHtml, entries) {
-  const sorted = [...entries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  // Xếp tăng dần: bài cũ nhất nằm trên cùng. Hai bài cùng ngày thì sort của
+  // JavaScript giữ nguyên thứ tự cũ, mà bài mới luôn được đẩy vào cuối mảng,
+  // nên trong một ngày cũng vẫn là cũ trước mới sau.
+  const sorted = [...entries].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const block = sorted.map((e) =>
     `    <li><time datetime="${escapeHtml(e.date)}">${viDate(e.date)}</time>`
   + `<a href="/posts/${e.slug}/">${escapeHtml(e.title)}</a></li>`).join('\n');
