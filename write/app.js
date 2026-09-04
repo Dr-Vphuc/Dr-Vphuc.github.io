@@ -821,6 +821,7 @@ ed.addEventListener('keydown', (e) => {
 /* -- xem trước + lưu nháp -- */
 
 let previewTimer, draftTimer;
+let giuViTriXemTruoc = false, viTriXemTruocCanGiu = 0;
 
 const previewDoc = () => { try { return $('preview').contentDocument; } catch (_) { return null; } };
 const previewWin = () => { try { return $('preview').contentWindow; } catch (_) { return null; } };
@@ -857,6 +858,7 @@ function theoDoiAnh() {
    cuộn còn nguyên, và nút vẫn còn cái người nghe sự kiện mà theme.js gắn cho
    nó lúc nạp (thay cả <body> là mất, vì script không chạy lại). */
 function renderPreview() {
+  const previousPreviewScrollY = previewWin()?.scrollY ?? 0;
   const title = $('title').value.trim() || 'Chưa có tiêu đề';
   const date = state.date || todayISO();
   let html;
@@ -875,6 +877,8 @@ function renderPreview() {
     const moi = new DOMParser().parseFromString(html, 'text/html')
       .querySelector('article.post');
     if (moi) {
+      giuViTriXemTruoc = true;
+      viTriXemTruocCanGiu = previousPreviewScrollY;
       cu.innerHTML = anhSangBlob(moi.innerHTML);
       theoDoiAnh();
       danhDauDong();
@@ -1003,7 +1007,19 @@ function khoa(fn) {
   }
 }
 
+function khoiPhucViTriXemTruoc(y) {
+  const doc = previewDoc(), win = previewWin();
+  if (!doc || !win) return;
+  const max = Math.max(0, doc.documentElement.scrollHeight - win.innerHeight);
+  khoa(() => win.scrollTo(0, Math.min(y, max)));
+}
+
 function cuonTheoOSoan() {
+  if (giuViTriXemTruoc) {
+    giuViTriXemTruoc = false;
+    khoiPhucViTriXemTruoc(viTriXemTruocCanGiu);
+    return;
+  }
   const win = previewWin();
   if (!win) return;
   khoa(() => win.scrollTo(0, noiSuy(layBang(), ed.scrollTop, 0)));
