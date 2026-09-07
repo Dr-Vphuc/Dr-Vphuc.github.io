@@ -1,6 +1,7 @@
 ---
-title: "Con mèo"
+title: "Con mèo (viết chưa toát ý, sẽ sửa sau)"
 date: 2026-09-01
+updated: 2026-09-07
 ---
 
 Trong phật giáo, con mèo có một vị trí đặc biệt, đến mức có đặc quyền leo trèo, trườn bò hay nằm ngủ trên tượng Phật, không khó để bắt gặp một chú mèo đi loanh quanh trong một ngôi chùa. Đặc biệt, ở Nhật Bản còn có ngôi chùa tên là chùa Mèo, nơi các tu sĩ nuôi hàng chục chú mèo hoang, mèo bệnh. Chùa Gōtoku-ji (Tokyo) là nơi bắt nguồn của hình ảnh chú mèo thần tài vẫy tay quen thuộc. Hơn thế, Phật giáo có bàn luận rất nhiều về duyên, nhân quả khi nuôi mèo. Không riêng gì Phật giáo, rất nhiều tín ngưỡng khác đều coi trọng loài mèo, cho những đặc quyền đặc biệt hay thêu dệt những câu truyện thần thoại về loài mèo. 
