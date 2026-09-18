@@ -1,6 +1,7 @@
 ---
 title: "Thiện với Ác, thực ra là một"
 date: 2026-09-04
+updated: 2026-09-19
 ---
 
 *Bạn đã dính click-bait, tiêu đề đúng là "Nhân chi sơ, tính bản thiện" và "Nhân chi sơ, tính bản ác", hai câu này thực ra là một.*
@@ -12,3 +13,5 @@ Mạnh Tử được coi là "Á thánh" (chỉ sau "Chí thánh" Khổng Tử) 
 > Tính tương cận, tập tương viễn
 
 Đại ý được nhiều người đồng thuận là con người khi sinh ra vốn mang bản tính lương thiện; thủa ban đầu thì 'tính' trong chúng sinh là gần như nhau, qua giáo dục, môi trường, điều kiện khác nhau thì tính sẽ thay đổi khác nhau.
+
+(Chưa xong)
