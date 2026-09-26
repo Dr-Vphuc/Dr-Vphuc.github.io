@@ -6,7 +6,7 @@ updated: 2026-09-26
 
 *Bạn đã dính click-bait, tiêu đề đúng là "Nhân chi sơ, tính bản thiện" và "Nhân chi sơ, tính bản ác", hai câu này thực ra là một.*
 
-![Nguồn: https://vi.pngtree.com/freepng/a-beautifully-designed-yin-yang-symbol-where-the-yin--dark-side--represents-serene-nature-featuring-deep-blue_20512605.html](/anh/2026-09-04-fca56f3a-1600x1600.webp)
+![Trong trắng có đen, trong đen có trắng](/anh/2026-09-26-63c0328f-447x447.webp)
 
 ### 1. Của người ta
 
@@ -34,3 +34,13 @@ Dù vậy, cơ sở ông dựa vào là di sản tư tưởng của Khổng Tử
 Để mà đưa lên bàn cân, thì cá nhân tôi thấy lí giải của Tuân Tử có phần thuyết phục và phù hợp với hiểu biết hiện nay hơn. Dù sao thì vốn dĩ 2 quan điểm này không có xung đột như những gì mặt chữ viết, ta hoàn toàn có thể dung hòa cả hai trong việc hình thành tư tưởng của bản thân.
 
 ### 2. Của bản thân
+
+Góc nhìn của tôi về tính thiện rộng hơn chút. Nếu -3,-2,-1 là ác thì 1,2,3 và kể cả 0 cũng đều là thiện. Nếu 1,2,3 là thực sự tạo ra tác động tích cực đong đếm được, thì 0 không còn phân chia, không phải là 2 cực âm dương, nó không phải một tính chất mà là một trạng thái. 
+
+Không (0) giống như nước, không tốt cũng không xấu, nó chảy. Chảy một cách hoàn toàn tự nhiên, không cố gắng, không gượng ép; Nước không học cách trở thành một 'nước' tốt, nước không chịu sự giáo dục quy củ của bề trên, nước đơn giản là chính nó, vì thế nó hoàn hảo. Nước là thiện. Không có gì, không làm gì cũng là thiện.
+
+Một đứa trẻ vừa sinh ra, mọi hành động của nó là theo bản năng, nó chưa có suy nghĩ riêng, chưa chịu sự giáo dục. Đứa trẻ ấy là Thiện.
+
+Tuy nhiên, nếu đứa trẻ có nhu cầu ăn uống, vui chơi, được chú ý, ta không thể nói đứa trẻ này là ác được. Chính Tuân Tử cũng nói rằng nhu cầu này của con người không phải là ác, chỉ khi nào để ham muốn dục vọng vượt quá mới dẫn đến làm việc ác, đó mới là ác, còn nhu cầu cơ bản thì không phải là ác. Khi còn dừng ở nhu cầu, chưa thực sự hành động ác có thể đong đếm được, chẳng phải đó chính là số 0 hay sao. 
+
+Như vậy, đối với tôi, 2 câu nói "Nhân chi sơ, tính bản thiện" và "Nhân chi sơ, tính bản ác" có thể nhìn như một ý chung, có thể tạm gọi như "Nhân chi sơ, tính bản không".
