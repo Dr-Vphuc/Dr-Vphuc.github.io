@@ -25,8 +25,8 @@ Tôi không quan tâm tôi có được gì sau những chuyến đi.
 Khung cảnh hùng vĩ làm thỏa con mắt tôi, nếu phải chờ đợi chen chúc, tôi sẽ không đến.  
 Đồ ăn ngon làm no bụng tôi, nếu nó không tiện đường, tôi sẽ không đến. 
 
+Không có quá khứ,  
 Không có tương lai,  
-Không có quá khứ,
 
 Tất cả những gì tôi quan tâm là tôi có vui không,  
 Mấy con chó đi cùng tôi có vui hay không.
