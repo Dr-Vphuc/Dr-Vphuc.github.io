@@ -1,7 +1,12 @@
 ---
 title: "Con chó này nữa"
 date: 2026-10-25
+updated: 2026-11-12
 ---
+
+![Ba vì](/anh/2026-11-12-0ff7865f-1200x1600.webp)
+
+![2 con chó biết nhóm lửa](/anh/2026-11-12-8c31bc61-1200x1600.webp)
 
 Có một con chó hoang làm thơ:
 
@@ -15,7 +20,7 @@ Bất cứ đâu làm tôi thấy thoải mái.
 Để tôi biết mình vẫn còn sống.
 
 Tôi dành 4 năm đèn sách, học được rất nhiều điều hữu ích.  
-Tôi dành 1 năm đi khắp các tỉnh miền Bắc, tôi chả học được cái mẹ gì. 
+Tôi dành 1 năm đi khắp các tỉnh miền Bắc, lại chả học được cái đếch gì. 
 
 Và đó chính xác là những điều tôi muốn.  
 
