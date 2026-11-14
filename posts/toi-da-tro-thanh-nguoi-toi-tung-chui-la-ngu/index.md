@@ -1,6 +1,7 @@
 ---
 title: "Tôi đã trở thành người tôi từng chửi là ngu"
 date: 2026-11-12
+updated: 2026-11-14
 ---
 
 ## 1. 
@@ -28,4 +29,4 @@ Vui:
 Tôi vẫn nhớ, một lần like ảnh cổ vào làm Research Intern ở ITCI, cổ đăng story mỉa mai mình chỉ như cái cúc áo :)).   
 Còn lần gần đây là định hỏi thăm thông qua một đứa bạn cùng phòng, được cái nhắn tin với cái đứa kia chưa bao giờ mà hiểu nổi, lúc điên điên lúc thảo mai, tôi chả hiểu. Mà hồi trước có vẻ nó thích tôi nhưng sau khi nói chuyện với tôi thấy điên tiết quá lên chắc hết luôn :)) Rồi chưa rõ ngọn ngành nó đi kể với cô ấy là tôi thích nó :)) Xong cổ tức lên đăng story 'ẩn ý' chửi tôi thậm tệ luôn 🤣. 
 
-Lúc đó tôi đã soạn thư 3000 chữ để nói với cô ấy, nhưng tôi mất cả ngày, và trong lúc viết, tôi lại như kể khổ, kể lại những ân hận, kể lại tâm tư của mình, bằng cách nào đó, bức thư đó đọc lên lại như thư xin lỗi, và tôi mãi mãi vẫn chưa thế gửi nó đi. Lần tôi đưa xát tay vào nút gửi nhất là lần tôi chợt nghĩ ra, cứ để hiểu lầm như này, có lẽ sẽ khiến cô ấy căm ghét tôi, và có thể move on dễ dàng hơn. Có lẽ cô ấy cũng đang trên đường đi tìm bản thân, phát triển bản thân, tìm cho mình một chiếc áo mới thật ưng ý, làm cô ấy thoải mái tự tin. Chứ không cái cái cúc áo cũ.
+Lúc đó tôi đã soạn thư 3000 chữ để nói với cô ấy, nhưng tôi mất cả ngày, và trong lúc viết, tôi lại như kể khổ, kể lại những ân hận, kể lại tâm tư của mình, bằng cách nào đó, bức thư đó đọc lên lại như thư xin lỗi, và tôi mãi mãi vẫn chưa thế gửi nó đi. Lần tôi đưa xát tay vào nút gửi nhất là lần tôi chợt nghĩ ra, cứ để hiểu lầm như này, có lẽ sẽ khiến cô ấy căm ghét tôi, và có thể move on dễ dàng hơn. Có lẽ cô ấy cũng đang trên đường đi tìm bản thân, phát triển bản thân, tìm cho mình một chiếc áo mới thật ưng ý, làm cô ấy thoải mái tự tin. Chứ không phải cái cúc áo cũ.
